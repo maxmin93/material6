@@ -1,13 +1,15 @@
 <p>
-  mat-table works!
+  mat-table works! <button mat-button (click)="showTable2()">Click me!</button>
 </p>
 <div class="example-header">
   <mat-form-field>
     <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
   </mat-form-field>
+  <mat-paginator #firstPaginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25]"
+      [showFirstLastButtons]="true"></mat-paginator>
 </div>
 <div class="example-container mat-elevation-z8">
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+  <table mat-table #firstSort="matSort" [dataSource]="dataSource" class="mat-elevation-z8" matSort>
 
     <!--- Note that these columns can be defined in any order.
           The actual rendered columns are set as a property on the row definition" -->
@@ -20,24 +22,37 @@
 
     <!-- Name Column -->
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
       <td mat-cell *matCellDef="let ele"> {{ele.name}} </td>
     </ng-container>
 
     <!-- Weight Column -->
     <ng-container matColumnDef="weight">
-      <th mat-header-cell *matHeaderCellDef> Weight </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Weight </th>
       <td mat-cell *matCellDef="let ele"> {{ele.weight}} </td>
     </ng-container>
 
     <!-- Symbol Column -->
     <ng-container matColumnDef="symbol">
-      <th mat-header-cell *matHeaderCellDef> Symbol </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Symbol </th>
       <td mat-cell *matCellDef="let ele"> {{ele.symbol}} </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onRowClicked(row)"></tr>
   </table>
-  <mat-paginator [length]="5" [pageSize]="3" [pageSizeOptions]="[5, 10, 25]"></mat-paginator>
 </div>
+<hr />
+<div class="example-container mat-elevation-z8">
+  <table mat-table #secondSort="matSort" [dataSource]="dataSource2" class="mat-elevation-z8" matSort>
+    <ng-container *ngFor="let col of columnNames" [matColumnDef]="col">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ col }} </th>
+      <td mat-cell *matCellDef="let row"> {{ row[col] }} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columnNames"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnNames;" (click)="onRowClicked(row)"></tr>
+  </table>
+  <mat-paginator #secondPaginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25]"></mat-paginator>
+</div>
+<hr />

@@ -17,15 +17,19 @@ import {
 } from '@angular/material';
 
 import { AppComponent } from './app.component';
-import { MatTableComponent } from './mat-table/mat-table.component';
-
 import { AppRoutingModule } from './app-routing.module';
 import { RouterModule } from '@angular/router';
+
+import { DataService } from './services/data.service';
+
+import { MatTableComponent } from './mat-table/mat-table.component';
+import { WebsocketComponent } from './websocket/websocket.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    MatTableComponent
+    MatTableComponent,
+    WebsocketComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +40,6 @@ import { RouterModule } from '@angular/router';
     CdkTableModule, MatTableModule, MatPaginatorModule, MatSortModule,
 
     AppRoutingModule
-
   ],
   exports: [
     CdkTableModule,
@@ -49,7 +52,7 @@ import { RouterModule } from '@angular/router';
     MatTableModule, MatTabsModule, MatToolbarModule, MatTooltipModule, 
     MatTreeModule, MatFormFieldModule
   ],
-  providers: [],
+  providers: [ /* DataService  */ ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

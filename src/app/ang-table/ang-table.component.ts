@@ -38,6 +38,10 @@ export class AngTableComponent implements OnInit {
       return 'rgb(255, 255,' + (155 + Math.floor(100 - ((car.rating - 8.7)/1.3)*100)) + ')';
   };
 
+  openConfirmDeleteLabelDialog($event){
+    console.log($event);
+  }
+  
   // special params:
   translations = <DataTableTranslations>{
       indexColumn: 'Index column',

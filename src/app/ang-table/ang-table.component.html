@@ -12,7 +12,7 @@
       [sortBy]="'rating'"
       [sortAsc]="false"
 
-      [selectColumn]="true"
+      [selectColumn]="false"
       [multiSelect]="false"
       [substituteRows]="false"
       [expandableRows]="true"
@@ -25,15 +25,21 @@
           <div [textContent]="item.description" style="padding: 5px; color: gray"></div>
       </ng-template>
 
+      <!--      
       <data-table-column *ngFor="let col of filmColumns" 
         [property]="col" [header]="col">
       </data-table-column>
-      <!--
+      -->
       <data-table-column [property]="'title'" [header]="'Title'" [sortable]="true"></data-table-column>
       <data-table-column [property]="'year'" [header]="'Release year'" [sortable]="true"></data-table-column>
       <data-table-column [property]="'rating'" [header]="'Rating'" [sortable]="true" [cellColors]="cellColor"></data-table-column>
-      <data-table-column [property]="'director'" [header]="'Director'"> </data-table-column>
-      -->
+      <data-table-column [property]="'director'" [header]="'Director'"></data-table-column>
+      <data-table-column [property]="null" [header]="'Remove'">
+          <a (click)="openConfirmDeleteLabelDialog($event)" mdTooltip="Delete" mdTooltipPosition="before">
+              <mat-icon>delete</mat-icon>
+          </a>
+      </data-table-column>
+      
   </data-table>
   <div style="margin-top: 10px">
       <b>Selected:</b>

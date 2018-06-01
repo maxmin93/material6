@@ -41,7 +41,7 @@ import { AngTableComponent } from './ang-table/ang-table.component';
     BrowserAnimationsModule,
     HttpClientModule,
 
-    MatFormFieldModule, MatInputModule,
+    MatFormFieldModule, MatInputModule, MatIconModule,
     CdkTableModule, MatTableModule, MatPaginatorModule, MatSortModule,
 
     DataTableModule,

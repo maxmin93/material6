@@ -12,9 +12,12 @@ import {
   MatListModule, MatMenuModule, MatNativeDateModule, MatPaginatorModule, MatProgressBarModule,
   MatProgressSpinnerModule, MatRadioModule, MatRippleModule, MatSelectModule, MatSidenavModule,
   MatSliderModule, MatSlideToggleModule, MatSnackBarModule, MatSortModule, MatStepperModule,
-  MatTableModule, MatTabsModule, MatToolbarModule, MatTooltipModule, 
-  MatTreeModule, MatFormFieldModule
+  MatTableModule, MatTabsModule, MatToolbarModule, MatTooltipModule, MatTreeModule, 
+  MatFormFieldModule
 } from '@angular/material';
+
+// angular5-data-table
+import { DataTableModule } from './data-table';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -24,12 +27,14 @@ import { DataService } from './services/data.service';
 
 import { MatTableComponent } from './mat-table/mat-table.component';
 import { WebsocketComponent } from './websocket/websocket.component';
+import { AngTableComponent } from './ang-table/ang-table.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MatTableComponent,
-    WebsocketComponent
+    WebsocketComponent,
+    AngTableComponent
   ],
   imports: [
     BrowserModule,
@@ -38,6 +43,8 @@ import { WebsocketComponent } from './websocket/websocket.component';
 
     MatFormFieldModule, MatInputModule,
     CdkTableModule, MatTableModule, MatPaginatorModule, MatSortModule,
+
+    DataTableModule,
 
     AppRoutingModule
   ],
@@ -49,11 +56,11 @@ import { WebsocketComponent } from './websocket/websocket.component';
     MatInputModule, MatListModule, MatMenuModule, MatNativeDateModule, MatPaginatorModule,
     MatProgressBarModule, MatProgressSpinnerModule, MatRadioModule, MatRippleModule, MatSelectModule,
     MatSidenavModule, MatSliderModule, MatSlideToggleModule, MatSnackBarModule, MatSortModule,
-    MatTableModule, MatTabsModule, MatToolbarModule, MatTooltipModule, 
-    MatTreeModule, MatFormFieldModule
+    MatTableModule, MatTabsModule, MatToolbarModule, MatTooltipModule, MatTreeModule, 
+    MatFormFieldModule
   ],
-  providers: [ /* DataService  */ ],
-  bootstrap: [AppComponent]
+  providers: [  ],
+  bootstrap: [ AppComponent ]
 })
 export class AppModule { }
 

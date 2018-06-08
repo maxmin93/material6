@@ -5,6 +5,11 @@
     "module": "es2015",
     "types": []
   },
+  "include": [
+    "node_modules/coremirror/mode/cypher/cypher.js",
+    "node_modules/coremirror/addon/selection/active-line.js",
+    "node_modules/coremirror/edit/matchbrackets.js"
+  ],
   "exclude": [
     "src/test.ts",
     "**/*.spec.ts"

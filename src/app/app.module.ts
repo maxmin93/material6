@@ -16,8 +16,9 @@ import {
   MatFormFieldModule
 } from '@angular/material';
 
-// angular5-data-table
-import { DataTableModule } from './data-table';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+// import { CodeMirror } from 'codemirror/lib/codemirror';
+// import { Cytoscape } from 'cytoscape/src';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -27,14 +28,16 @@ import { DataService } from './services/data.service';
 
 import { MatTableComponent } from './mat-table/mat-table.component';
 import { WebsocketComponent } from './websocket/websocket.component';
-import { AngTableComponent } from './ang-table/ang-table.component';
+import { NgxTableComponent } from './ngx-table/ngx-table.component';
+import { CytoGraphComponent } from './cyto-graph/cyto-graph.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MatTableComponent,
     WebsocketComponent,
-    AngTableComponent
+    NgxTableComponent,
+    CytoGraphComponent
   ],
   imports: [
     BrowserModule,
@@ -43,8 +46,10 @@ import { AngTableComponent } from './ang-table/ang-table.component';
 
     MatFormFieldModule, MatInputModule, MatIconModule,
     CdkTableModule, MatTableModule, MatPaginatorModule, MatSortModule,
-
-    DataTableModule,
+    
+    NgxDatatableModule,
+    // CodeMirror,
+    // Cytoscape,
 
     AppRoutingModule
   ],

@@ -1,0 +1,28 @@
+<h2>Theme Demo</h2>
+<form><textarea #codeArea id="code" name="code">
+  -- NOTE: this is a sample query about NORTHWIND (sample db) 
+  match path=(cust:customer)-[:PURCHASED]->(r:"order")-[o:ORDERS]->(p:product) 
+  return path, r, id(cust), o.quantity, label(p), properties(p), (('{"a":1, "b":null}'::jsonb) -> 'b') as TEST 
+  limit 100; 
+</textarea></form>
+
+<div>
+  <h3>
+    Client-side Paging
+    <small>
+      <a href="https://github.com/swimlane/ngx-datatable/blob/master/demo/paging/paging-client.component.ts" target="_blank">
+        Source
+      </a>
+    </small>
+  </h3>
+  <ngx-datatable
+    class="material"
+    [rows]="rows"
+    [columns]="[{name:'Name'},{name:'Gender'},{name:'Company'}]"
+    [columnMode]="'force'"
+    [headerHeight]="50"
+    [footerHeight]="50"
+    [rowHeight]="'auto'"
+    [limit]="10">
+  </ngx-datatable>
+</div>

@@ -26,6 +26,10 @@
               "src/styles.css"
             ],
             "scripts": [
+              "node_modules/codemirror/lib/codemirror.js",
+              "node_modules/codemirror/mode/cypher/cypher.js",
+              "node_modules/codemirror/addon/selection/active-line.js",
+              "node_modules/codemirror/addon/edit/matchbrackets.js"
             ]
           },
           "configurations": {

@@ -1,5 +1,6 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
-// import { CodeMirror } from 'codemirror/lib/codemirror';
+
+declare var CodeMirror : any;
 
 @Component({
   selector: 'app-ngx-table',
@@ -20,11 +21,11 @@ export class NgxTableComponent implements OnInit {
   }
 
   ngOnInit(){
-    // this.editor = CodeMirror.fromTextArea(this.codeArea, {
-    //   lineNumbers: true,
-    //   styleActiveLine: true,
-    //   matchBrackets: true
-    // });
+    this.editor = new CodeMirror.fromTextArea( this.codeArea.nativeElement, {
+      lineNumbers: true,
+      styleActiveLine: true,
+      matchBrackets: true
+    });
   }
 
   fetch(cb) {

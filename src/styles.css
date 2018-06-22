@@ -1,5 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
-@import "codemirror/theme/idea.css";
 
-.CodeMirror {border: 1px solid black; font-size:13px}
+@import '~@swimlane/ngx-datatable/release/index.css';
+@import '~@swimlane/ngx-datatable/release/themes/material.css';
+@import '~@swimlane/ngx-datatable/release/assets/icons.css';
+
+@import "~codemirror/lib/codemirror.css";
+@import "~codemirror/theme/idea.css";
+
+@font-face { font-family: "Noto Sans"; src: url("./assets/fonts/NotoSansArmenian-Regular.ttf"); }
+@font-face { font-family: "Noto Sans Bold"; src: url("./assets/fonts/NotoSansArmenian-Bold.ttf"); }
+@font-face { font-family: "Noto Sans CJK KR"; src: url("./assets/fonts/NotoSansCJKkr-Regular.otf"); }
+@font-face { font-family: "Noto Sans CJK KR Bold"; src: url("./assets/fonts/NotoSansCJKkr-Bold.otf"); }
+
+.CodeMirror {
+  border: 1px solid black;
+  font-family: 'Noto Sans CJK KR', monospace;
+  font-size: 18px;
+}

@@ -1,9 +1,9 @@
 <h2>Theme Demo</h2>
 <form><textarea #codeArea id="code" name="code">
-  -- NOTE: this is a sample query about NORTHWIND (sample db) 
-  match path=(cust:customer)-[:PURCHASED]->(r:"order")-[o:ORDERS]->(p:product) 
-  return path, r, id(cust), o.quantity, label(p), properties(p), (('{"a":1, "b":null}'::jsonb) -> 'b') as TEST 
-  limit 100; 
+-- NOTE: this is a sample query about NORTHWIND (sample db) 
+match path=(cust:customer)-[:PURCHASED]->(r:"order")-[o:ORDERS]->(p:product) 
+return path, r, id(cust), o.quantity, label(p), properties(p), (('{"a":1, "b":null}'::jsonb) -> 'b') as TEST 
+limit 100;
 </textarea></form>
 
 <div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-cyto-graph',
@@ -6,6 +6,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./cyto-graph.component.css']
 })
 export class CytoGraphComponent implements OnInit {
+
+  @ViewChild('progressBar') progressBar: ElementRef;
 
   constructor() { }
 

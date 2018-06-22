@@ -44,7 +44,8 @@ import { CytoGraphComponent } from './cyto-graph/cyto-graph.component';
     BrowserAnimationsModule,
     HttpClientModule,
 
-    MatFormFieldModule, MatInputModule, MatIconModule,
+    MatFormFieldModule, MatInputModule, MatIconModule, MatProgressBarModule,
+    MatButtonToggleModule,
     CdkTableModule, MatTableModule, MatPaginatorModule, MatSortModule,
     
     NgxDatatableModule,

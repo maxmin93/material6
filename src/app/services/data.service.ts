@@ -17,9 +17,10 @@ export class DataService {
   private socket$ : WebSocketSubject<number>;
   private messanger$ : Rx.Observer<number>;
 
+  private reconnectInterval: number = 5000;   // pause between connections
+  private reconnectAttempts: number = 10;     // number of connection attempts
+
   constructor(
-    private reconnectInterval: number = 5000,  /// pause between connections
-    private reconnectAttempts: number = 10     /// number of connection attempts
   ) { 
     /// config for WebSocketSubject
     /// except the url, here is closeObserver and openObserver to update connection status

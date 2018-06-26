@@ -11,6 +11,7 @@ export class CytoGraphComponent implements OnInit, AfterViewInit {
 
   // cytoscape 객체 
   private graphAgens:any = null;
+  private showNodeTitle:boolean = false;
 
   @ViewChild('progressBar') progressBar: ElementRef;
   @ViewChild('divGraph') divGraph: ElementRef;
@@ -22,8 +23,8 @@ export class CytoGraphComponent implements OnInit, AfterViewInit {
     window['angularComponentRef'] = {
       zone: this._ngZone,
       cyCanvasCallback: () => this.cyCanvasCallback(),
-      cyElemCallback: (value) => this.cyElemCallback(value),
-      cyNodeCallback: (value) => this.cyNodeCallback(value),
+      cyElemCallback: (target) => this.cyElemCallback(target),
+      cyNodeCallback: (target) => this.cyNodeCallback(target),
       cyQtipMenuCallback: (target, value) => this.cyQtipMenuCallback(target, value),
       component: this
     };    
@@ -43,28 +44,123 @@ export class CytoGraphComponent implements OnInit, AfterViewInit {
   }
 
   cyCanvasCallback(){
-    console.log( 'cyCanvasCallback:' );
   }
   cyElemCallback(target){
-    console.log( 'cyElemCallback:', target.id(), target.data('name') );
+    console.log( 'cyElemCallback:', `[${target.id()}]`, target.data('name') );
   }
   cyNodeCallback(target){
-    console.log( 'cyNodeCallback:', target );
   }
   cyQtipMenuCallback(target, value){
-    console.log( 'cyQtipMenuCallback:', target, value );
   }
 
-  toggleProgressBar(){
-    this.progressBar.nativeElement.style.visibility = 
+  toggleProgress(option:string=undefined){
+    if( option === undefined ){
+      this.progressBar.nativeElement.style.visibility = 
         (this.progressBar.nativeElement.style.visibility == 'visible') ? 'hidden' : 'visible';
+    }
+    else{
+      this.progressBar.nativeElement.style.visibility = option;
+    }
+  }
+  toggleTitle(option:boolean=undefined){
+    agens.graph.defaultSetting.hideNodeTitle = (option === undefined) ? 
+        !agens.graph.defaultSetting.hideNodeTitle : option;
+
+    agens.cy.style(agens.graph.stylelist['dark']).update();
+  }
+
+  //////////////////////////////////////////////////////////
+
+  runMarkov(){
+    // Input parameters to Markov cluster algorithm
+    let options = {
+      expandFactor: 2,      // affects time of computation and cluster granularity to some extent: M * M
+      inflateFactor: 1.3,   // the greater the value, the more clusters: M(i,j) / E(j)
+      maxIterations: 20,    // maximum number of iterations of the MCL algorithm
+      attributes: [
+          function(edge) {
+              return 0.65; // edge.data('weight');
+          }
+      ]
+    };
+
+    // Run Markov cluster on graph
+    let clusters = agens.cy.elements().markovCluster( options );
+    console.log( '# of clusters:', clusters.length, `(nodes=${agens.cy.nodes().size()})` );
+    // Assign random colors to each cluster!
+    for( let c=0; c < clusters.length; c+=1 ){
+        let color = '#' + Math.floor(Math.random()*16777215).toString(16);
+        if( color.length < 7 ) color += '0';
+        console.log(`cluster[${c}]: ${clusters[c].size()} --> '${color}'`);
+        clusters[c].style( 'background-color', color );
+    }
+  }
+
+  //////////////////////////////////////////////////////////
+
+  layoutOriginal(){
+    agens.cy.nodes().map( ele => {
+      if( agens.caches.nodePosition.has(ele) ){
+        ele.position( agens.caches.nodePosition.get(ele) );
+      } 
+    });
+    // refit canvas
+    agens.cy.fit( agens.cy.elements(), 50);
+    // agens.cy.style(agens.graph.stylelist['dark']).update();
+  }
+  layoutEuler(){
+    this.changeLayout('euler');
+  }
+  layoutKlay(){
+    this.changeLayout('klay');
+  }
+  layoutDagre(){
+    this.changeLayout('dagre');
+  }
+  layoutCoseBk(){
+    this.changeLayout('cose-bilkent');
+  }
+  layoutCentric(){
+    this.changeLayout('concentric');
+  }
+  changeLayout(layout:string='euler'){
+    // 선택된 elements 들이 있으면 그것들을 대상으로 실행, 없으면 전체
+    let elements = this.graphAgens.elements(':selected');
+    if( elements.length <= 1) elements = this.graphAgens.elements(':visible');
+
+    let layoutOption = {
+      name: layout,
+      fit: true, padding: 30, boundingBox: undefined, 
+      nodeDimensionsIncludeLabels: true, randomize: true,
+      animate: true, animationDuration: 2800, maxSimulationTime: 2800, 
+      ready: function(){}, stop: function(){},
+      // for euler
+      springLength: edge => 120, springCoeff: edge => 0.0008,
+    };
+
+    // adjust layout
+    let layoutHandler = elements.layout(layoutOption);
+    layoutHandler.on('layoutstart', function(){
+      // 최대 3초(3000ms) 안에는 멈추도록 설정
+      setTimeout(function(){
+        layoutHandler.stop();
+      }, 3000);
+    });
+    layoutHandler.run();
   }
 }
 
 const GRAPH_DATA = {
   "elements":{
     "nodes":[
-      {"data":{"size":1,"name":"10248","id":"12.1","labels":["order"],"props":{"shippostalcode":"51100","shipcountry":"France","orderid":10248,"freight":32.38,"shipaddress":"59 rue de l''Abbaye","shippeddate":"1996-07-16","orderdate":"1996-07-04","employeeid":5,"shipvia":3,"shipcity":"Reims","name":"10248","customerid":"VINET","id":"10248","shipname":"Vins et alcools Chevalier","requireddate":"1996-08-01"},"$$style":{"_self":{"color":null,"size":null,"label":null},"_label":{"color":"rgb(21, 165, 11)","size":"55px","label":null}},"neighbors":["product","employee","customer"]},"position":{"x":502.5095056555872,"y":359.8300431353856},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"classes":""}
+      {"data": { "size":1,"name":"10248","id":"12.1","labels":["order"]
+                ,"props":{"shippostalcode":"51100","shipcountry":"France","orderid":10248,"freight":32.38,"shipaddress":"59 rue de l''Abbaye","shippeddate":"1996-07-16","orderdate":"1996-07-04","employeeid":5,"shipvia":3,"shipcity":"Reims","name":"10248","customerid":"VINET","id":"10248","shipname":"Vins et alcools Chevalier","requireddate":"1996-08-01"}
+                ,"$$style":{ "_self":{"color":null,"size":null,"label":null}
+                            ,"_label":{"color":"rgb(21, 165, 11)","size":"55px","label":null}}
+                ,"neighbors":["product","employee","customer"]}
+                ,"position":{"x":502.5095056555872,"y":359.8300431353856}
+                ,"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"classes":""
+              }
       ,{"data":{"size":1,"name":"Gustaf''s Knäckebröd","id":"4.22","labels":["product"],"props":{"supplierid":9,"productid":22,"reorderlevel":25,"quantityperunit":"24 - 500 g pkgs.","name":"Gustaf''s Knäckebröd","unitsonorder":0,"productname":"Gustaf''s Knäckebröd","id":"22","discontinued":0,"unitprice":21,"categoryid":5,"unitsinstock":104},"$$style":{"_self":{"color":null,"size":null,"label":null},"_label":{"color":"rgb(12, 27, 140)","size":"55px","label":null}},"neighbors":["supplier","category","order","customer"]},"position":{"x":639.5827663316413,"y":1285.6568934370785},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"classes":""}
       ,{"data":{"size":1,"name":"Longlife Tofu","id":"4.74","labels":["product"],"props":{"supplierid":4,"productid":74,"reorderlevel":5,"quantityperunit":"5 kg pkg.","name":"Longlife Tofu","unitsonorder":20,"productname":"Longlife Tofu","id":"74","discontinued":0,"unitprice":10,"categoryid":7,"unitsinstock":4},"$$style":{"_self":{"color":null,"size":null,"label":null},"_label":{"color":"rgb(12, 27, 140)","size":"55px","label":null}},"neighbors":["supplier","category","order","customer"]},"position":{"x":1185.704078455227,"y":1035.3108399524524},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"classes":""}
       ,{"data":{"size":1,"name":"Tarte au sucre","id":"4.62","labels":["product"],"props":{"supplierid":29,"productid":62,"reorderlevel":0,"quantityperunit":"48 pies","name":"Tarte au sucre","unitsonorder":0,"productname":"Tarte au sucre","id":"62","discontinued":0,"unitprice":49.3,"categoryid":3,"unitsinstock":17},"$$style":{"_self":{"color":null,"size":null,"label":null},"_label":{"color":"rgb(12, 27, 140)","size":"55px","label":null}},"neighbors":["supplier","category","order","customer"]},"position":{"x":475.75417794081557,"y":1043.5917381442684},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"classes":""}
@@ -205,7 +301,13 @@ const GRAPH_DATA = {
       ,{"data":{"size":1,"name":"10962","id":"12.715","labels":["order"],"props":{"shippostalcode":"01307","shipcountry":"Germany","orderid":10962,"freight":275.79,"shipaddress":"Taucherstraße 10","shippeddate":"1998-03-23","orderdate":"1998-03-19","employeeid":8,"shipvia":2,"shipcity":"Cunewalde","name":"10962","customerid":"QUICK","id":"10962","shipname":"QUICK-Stop","requireddate":"1998-04-16"},"$$expandid":"product_4.7","neighbors":["product","employee","customer"]},"position":{"x":2189.0726355040274,"y":13.07233752439069},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"classes":"expand"}
       ],
     "edges":[
-      {"data":{"size":1,"name":"18.18","id":"18.18","source":"12.7","labels":["orders"],"target":"4.24","props":{"quantity":15,"discount":0.15,"unitprice":3.6},"$$style":{"_self":{"color":null,"size":null,"label":null},"_label":{"color":"rgb(219, 127, 244)","size":"2px","label":""}}},"position":{},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"classes":""}
+      {"data":{"size":1,"name":"18.18","id":"18.18","source":"12.7","labels":["orders"],"target":"4.24"
+              ,"props":{"quantity":15,"discount":0.15,"unitprice":3.6}
+              ,"$$style":{ "_self":{"color":null,"size":null,"label":null}
+                          ,"_label":{"color":"rgb(219, 127, 244)","size":"2px","label":""}}}
+              ,"position":{}
+              ,"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"classes":""
+            }
       ,{"data":{"size":1,"name":"13.17","id":"13.17","source":"11.24","labels":["purchased"],"target":"12.17","props":{},"$$style":{"_self":{"color":null,"size":null,"label":null},"_label":{"color":"rgb(112, 239, 224)","size":"2px","label":""}}},"position":{},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"classes":""}
       ,{"data":{"size":1,"name":"18.20","id":"18.20","source":"12.7","labels":["orders"],"target":"4.74","props":{"quantity":21,"discount":0,"unitprice":8},"$$style":{"_self":{"color":null,"size":null,"label":null},"_label":{"color":"rgb(219, 127, 244)","size":"2px","label":""}}},"position":{},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"classes":""}
       ,{"data":{"size":1,"name":"13.6","id":"13.6","source":"11.34","labels":["purchased"],"target":"12.6","props":{},"$$style":{"_self":{"color":null,"size":null,"label":null},"_label":{"color":"rgb(112, 239, 224)","size":"2px","label":""}}},"position":{},"group":"edges","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"classes":""}

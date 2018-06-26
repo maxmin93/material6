@@ -1,6 +1,25 @@
+<h4>cyto-graph works!</h4>
 <p>
-  cyto-graph works!<span>&nbsp;</span>
-  <button mat-fab (click)="toggleProgressBar()">Click Me</button>
+  <button mat-raised-button color="primary" (click)="toggleProgress()">T-Progress</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="accent" (click)="toggleTitle()">T-Title</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="warn" (click)="runMarkov()">R-Markov</button>
+  <span>&nbsp;</span>
+</p>
+<p>
+  <button mat-raised-button color="primary" (click)="layoutOriginal()">L-Original</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="accent" (click)="layoutEuler()">L-Euler</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="warn" (click)="layoutKlay()">L-Klay</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="accent" (click)="layoutCoseBk()">L-CoseBk</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="warn" (click)="layoutDagre()">L-Dagre</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="accent" (click)="layoutCentric()">L-Centric</button>
+  <span>&nbsp;</span>
 </p>
 <div class="wrapped-box">
   <div #progressBar style='visibility:hidden;'>

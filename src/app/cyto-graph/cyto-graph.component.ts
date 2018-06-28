@@ -98,15 +98,9 @@ export class CytoGraphComponent implements OnInit, AfterViewInit {
 
   //////////////////////////////////////////////////////////
 
-  layoutOriginal(){
-    agens.cy.nodes().map( ele => {
-      if( agens.caches.nodePosition.has(ele) ){
-        ele.position( agens.caches.nodePosition.get(ele) );
-      } 
-    });
-    // refit canvas
-    agens.cy.fit( agens.cy.elements(), 50);
-    // agens.cy.style(agens.graph.stylelist['dark']).update();
+  rollback(){
+    // agens.caches.rollback('nodePosition');
+    agens.caches.rollback();
   }
   layoutEuler(){
     this.changeLayout('euler');

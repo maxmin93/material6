@@ -25,7 +25,7 @@
   agens.graph = agens.graph || {};
 
   /////////////////////////////////////////////////////////
-  //  NAMESPACE: agens.graph
+  //  NAMESPACE: agens.caches
   /////////////////////////////////////////////////////////
 
   agens.caches = {
@@ -44,8 +44,63 @@
       if( option === undefined || option === 'edgeLabel' ) this.edgeLabel = new WeakMap();
       if( option === undefined || option === 'edgeColor' ) this.edgeColor = new WeakMap();
       if( option === undefined || option === 'edgeWidth' ) this.edgeWidth = new WeakMap();
+    },
+    rollback: function(option){
+      if( option === undefined || option === 'nodePosition' ){
+        agens.cy.nodes().map( ele => {
+          if( agens.caches.nodePosition.has(ele) ){
+            ele.position( agens.caches.nodePosition.get(ele) );
+          } 
+        });
+        agens.cy.fit( agens.cy.elements(), 30);
+      }
+      if( option === undefined || option === 'nodeLabel' ){
+        agens.cy.nodes().map( ele => {
+          if( agens.caches.nodeLabel.has(ele) )
+            ele.style('label', agens.graph.defaultSetting.hideNodeTitle 
+                        ? '' : agens.caches.nodeLabel.get(ele));
+        });
+      }
+      if( option === undefined || option === 'nodeColor' ){
+        agens.cy.nodes().map( ele => {
+          if( agens.caches.nodeColor.has(ele) )
+            ele.style('background-color', agens.caches.nodeColor.get(ele));
+        });
+      }
+      if( option === undefined || option === 'nodeWidth' ){
+        agens.cy.nodes().map( ele => {
+          if( agens.caches.nodeWidth.has(ele) )
+            ele.style('width', agens.caches.nodeWidth.get(ele));
+            ele.style('height', agens.caches.nodeWidth.get(ele));
+        });
+      }
+      if( option === undefined || option === 'edgeLabel' ){
+        agens.cy.edges().map( ele => {
+          if( agens.caches.edgeLabel.has(ele) )
+            ele.style('label', agens.graph.defaultSetting.hideEdgeTitle
+                        ? '' : agens.caches.edgeLabel.get(ele) );
+        });
+      }
+      if( option === undefined || option === 'edgeColor' ){
+        agens.cy.edges().map( ele => {
+          if( agens.caches.edgeColor.has(ele) )
+            ele.style('line-color', agens.caches.edgeColor.get(ele) );
+            ele.style('source-arrow-color', agens.caches.edgeColor.get(ele) );
+            ele.style('target-arrow-color', agens.caches.edgeColor.get(ele) );            
+        });
+      }
+      if( option === undefined || option === 'edgeWidth' ){
+        agens.cy.edges().map( ele => {
+          if( agens.caches.edgeWidth.has(ele) )
+            ele.style('width', agens.caches.edgeWidth.get(ele) );
+        });
+      }
     }
   };
+
+  /////////////////////////////////////////////////////////
+  //  NAMESPACE: agens.styles
+  /////////////////////////////////////////////////////////
 
   agens.styles = {
     nodeLabel: function(e){
@@ -74,7 +129,6 @@
       return '55px';
     },
     edgeLabel: function(e){
-      if( agens.graph.defaultSetting.hideEdgeTitle ) return '';
       if( e.data('$$style') !== undefined ){
         if( e.data('$$style')._self.label !== null )
           return e.data('props').hasOwnProperty(e.data('$$style')._self.label) ? 
@@ -126,9 +180,9 @@
         selector: 'node',
         css: {
           'label': function(e){
-              if( agens.graph.defaultSetting.hideNodeTitle ) return '';
               if( !agens.caches.nodeLabel.has(e) ) 
                 agens.caches.nodeLabel.set(e, agens.styles.nodeLabel(e));
+              if( agens.graph.defaultSetting.hideNodeTitle ) return '';
               return agens.caches.nodeLabel.get(e);
             },
 
@@ -196,9 +250,9 @@
         selector: 'edge',
         css: {
           'label':function(e){
-            if( agens.graph.defaultSetting.hideEdgeTitle ) return '';
             if( !agens.caches.edgeLabel.has(e) ) 
               agens.caches.edgeLabel.set(e, agens.styles.edgeLabel(e));
+            if( agens.graph.defaultSetting.hideEdgeTitle ) return '';
             return agens.caches.edgeLabel.get(e);
           },
 
@@ -513,7 +567,7 @@
       });
     cy.$api.edge.disable();
 
-    cy.$api.undo = cy.undoRedo({
+    cy.$api.unre = cy.undoRedo({
         isDebug: false, // Debug mode for console messages
         actions: {},// actions to be added
         undoableDrag: true, // Whether dragging nodes are undoable can be a function as well
@@ -612,10 +666,6 @@
           }
         ]
       });
-    
-    // Public Property : UndoRedo for cy
-    cy.undoRedo = cy.undoRedo();
-
   };
 
 
@@ -648,7 +698,7 @@
       // refresh style
       agens.cy.style(agens.graph.stylelist['dark']).update();
       // refit canvas
-      agens.cy.fit( agens.cy.elements(), 50);
+      agens.cy.fit( agens.cy.elements(), 30);
       // save original positions
       agens.graph.savePositions();
     });

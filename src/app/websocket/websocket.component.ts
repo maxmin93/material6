@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import * as Rx from 'rxjs';
 
-import { Observable } from 'rxjs/Observable';
+// import { Observable } from 'rxjs';
 import { WebSocketSubject } from 'rxjs/webSocket';
 
 // import { DataService } from '../services/data.service';

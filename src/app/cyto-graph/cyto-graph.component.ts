@@ -53,6 +53,88 @@ export class CytoGraphComponent implements OnInit, AfterViewInit {
   cyQtipMenuCallback(target, value){
   }
 
+  /////////////////////////////////////////////////////////////////
+  // Centrality methods
+  /////////////////////////////////////////////////////////////////
+
+  centralrityPR(){
+    let centrality = agens.cy.elements().pageRank();
+    agens.cy.nodes().map(ele => {
+      ele.scratch('_centralrityPr', centrality.rank(ele));
+    });
+    let acc = agens.cy.nodes().reduce((acc, cur) => {
+        acc[0] = ( acc[0] === undefined || cur.scratch('_centralrityPr') < acc[0] ) ? cur.scratch('_centralrityPr') : acc[0];   // min  
+        acc[1] = ( acc[1] === undefined || cur.scratch('_centralrityPr') > acc[1] ) ? cur.scratch('_centralrityPr') : acc[1];   // max
+        acc[2] = ( acc[2] === undefined ) ? cur.scratch('_centralrityPr') : acc[2] + cur.scratch('_centralrityPr');   // sum
+        return acc;
+      }, []);
+    console.log( 'pageRank Centrality: ', acc[0], acc[1], acc[2]/agens.cy.nodes().size() );
+    agens.cy.nodes().map(ele => {
+      let val = Math.floor( (ele.scratch('_centralrityPr') - acc[0])/( acc[1]-acc[0] )*100 ) + 20;
+      // console.log( ele.id(), ele.data('name'), val );
+      ele.style('width', val).style('height', val);
+    });
+  }
+
+  centralrityDg(){
+    let centrality = agens.cy.elements().degreeCentralityNormalized();
+    agens.cy.nodes().map(ele => {
+      ele.scratch('_centralrityDg', centrality.degree(ele));
+    });
+    let acc = agens.cy.nodes().reduce((acc, cur) => {
+        acc[0] = ( acc[0] === undefined || cur.scratch('_centralrityDg') < acc[0] ) ? cur.scratch('_centralrityDg') : acc[0];   // min  
+        acc[1] = ( acc[1] === undefined || cur.scratch('_centralrityDg') > acc[1] ) ? cur.scratch('_centralrityDg') : acc[1];   // max
+        acc[2] = ( acc[2] === undefined ) ? cur.scratch('_centralrityDg') : acc[2] + cur.scratch('_centralrityDg');   // sum
+        return acc;
+      }, []);
+    console.log( 'Degree Centrality: ', acc[0], acc[1], acc[2]/agens.cy.nodes().size() );
+    agens.cy.nodes().map(ele => {
+      let val = Math.floor( (ele.scratch('_centralrityDg') - acc[0])/( acc[1]-acc[0] )*100 ) + 20;
+      // console.log( ele.id(), ele.data('name'), val );
+      ele.style('width', val).style('height', val);
+    });
+  }
+  centralrityCn(){
+    let centrality = agens.cy.elements().closenessCentralityNormalized();
+
+    agens.cy.nodes().map(ele => {
+      ele.scratch('_centralrityCn', centrality.closeness(ele));
+    });
+    let acc = agens.cy.nodes().reduce((acc, cur) => {
+        acc[0] = ( acc[0] === undefined || cur.scratch('_centralrityCn') < acc[0] ) ? cur.scratch('_centralrityCn') : acc[0];   // min  
+        acc[1] = ( acc[1] === undefined || cur.scratch('_centralrityCn') > acc[1] ) ? cur.scratch('_centralrityCn') : acc[1];   // max
+        acc[2] = ( acc[2] === undefined ) ? cur.scratch('_centralrityCn') : acc[2] + cur.scratch('_centralrityCn');   // sum
+        return acc;
+      }, []);
+    console.log( 'Closeness Centrality:', acc[0], acc[1], acc[2]/agens.cy.nodes().size() );
+    agens.cy.nodes().map(ele => {
+      let val = Math.floor( (ele.scratch('_centralrityCn') - acc[0])/( acc[1]-acc[0] )*100 ) + 20;
+      // console.log( ele.id(), ele.data('name'), val );
+      ele.style('width', val).style('height', val);
+    });
+  }
+  centralrityBt(){
+    let centrality = agens.cy.elements().betweennessCentrality();
+
+    agens.cy.nodes().map(ele => {
+      ele.scratch('_centralrityBt', centrality.betweenness(ele));
+    });
+    let acc = agens.cy.nodes().reduce((acc, cur) => {
+        acc[0] = ( acc[0] === undefined || cur.scratch('_centralrityBt') < acc[0] ) ? cur.scratch('_centralrityBt') : acc[0];   // min  
+        acc[1] = ( acc[1] === undefined || cur.scratch('_centralrityBt') > acc[1] ) ? cur.scratch('_centralrityBt') : acc[1];   // max
+        acc[2] = ( acc[2] === undefined ) ? cur.scratch('_centralrityBt') : acc[2] + cur.scratch('_centralrityBt');   // sum
+        return acc;
+      }, []);
+    console.log( 'Betweenness Centrality:', acc[0], acc[1], acc[2]/agens.cy.nodes().size() );
+    agens.cy.nodes().map(ele => {
+      let val = Math.floor( (ele.scratch('_centralrityBt') - acc[0])/( acc[1]-acc[0] )*100 ) + 20;
+      // console.log( ele.id(), ele.data('name'), val );
+      ele.style('width', val).style('height', val);
+    });
+  }
+
+  //////////////////////////////////////////////////////////
+
   toggleProgress(option:string=undefined){
     if( option === undefined ){
       this.progressBar.nativeElement.style.visibility = 

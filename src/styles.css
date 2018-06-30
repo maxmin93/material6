@@ -13,8 +13,11 @@
 @import "~cytoscape-panzoom/cytoscape.js-panzoom.css";
 @import "~cytoscape-qtip2/jquery.qtip.min.css";
 
-@font-face { font-family: "Noto Sans"; src: url("./assets/fonts/NotoSansArmenian-Regular.ttf"); }
-@font-face { font-family: "Noto Sans Bold"; src: url("./assets/fonts/NotoSansArmenian-Bold.ttf"); }
-@font-face { font-family: "Noto Sans CJK KR"; src: url("./assets/fonts/NotoSansCJKkr-Regular.otf"); }
-@font-face { font-family: "Noto Sans CJK KR Bold"; src: url("./assets/fonts/NotoSansCJKkr-Bold.otf"); }
+@font-face { font-family: 'Nanum Gothic', sans-serif; 
+  src: url("resources/fonts/NanumGothic-Regular.ttf"), url("resources/fonts/NanumGothic-Bold.ttf"), url("resources/fonts/NanumGothic-ExtraBold.ttf");
+}
 
+body {
+  font-family: 'Nanum Gothic', sans-serif;
+  font-size: 18px;
+}

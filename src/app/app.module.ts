@@ -17,12 +17,10 @@ import {
 } from '@angular/material';
 
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-// import { CodeMirror } from 'codemirror/lib/codemirror';
-// import { Cytoscape } from 'cytoscape/src';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { RouterModule } from '@angular/router';
+// import { RouterModule } from '@angular/router';
 
 // import { DataService } from './services/data.service';
 
@@ -30,6 +28,7 @@ import { MatTableComponent } from './mat-table/mat-table.component';
 import { WebsocketComponent } from './websocket/websocket.component';
 import { NgxTableComponent } from './ngx-table/ngx-table.component';
 import { CytoGraphComponent } from './cyto-graph/cyto-graph.component';
+import { RxjsTutorialsComponent } from './rxjs-tutorials/rxjs-tutorials.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +36,8 @@ import { CytoGraphComponent } from './cyto-graph/cyto-graph.component';
     MatTableComponent,
     WebsocketComponent,
     NgxTableComponent,
-    CytoGraphComponent
+    CytoGraphComponent,
+    RxjsTutorialsComponent
   ],
   imports: [
     BrowserModule,
@@ -49,8 +49,6 @@ import { CytoGraphComponent } from './cyto-graph/cyto-graph.component';
     CdkTableModule, MatTableModule, MatPaginatorModule, MatSortModule,
     
     NgxDatatableModule,
-    // CodeMirror,
-    // Cytoscape,
 
     AppRoutingModule
   ],

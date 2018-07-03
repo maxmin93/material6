@@ -8,6 +8,8 @@ import { concat, concatAll, combineAll, defaultIfEmpty, mergeMap, groupBy, toArr
 
 import { GraphDataService } from '../services/graph-data.service';
 
+import * as _ from 'lodash';
+
 @Component({
   selector: 'app-rxjs-tutorials',
   templateUrl: './rxjs-tutorials.component.html',
@@ -17,16 +19,37 @@ export class RxjsTutorialsComponent implements AfterViewInit, OnDestroy {
 
   constructor( private graphService: GraphDataService ) { }
 
+  ngOnDestroy(){
+  }
+
   ngAfterViewInit() {
     // this.tutorial01();
     // this.tutorial02();
     // this.tutorial03();
     // this.tutorial04();
     // this.tutorial05();
-    this.tutorial06();
+    // this.tutorial06();
+    this.lodash01();
   }
 
-  ngOnDestroy(){
+  lodash01(){
+    let object = { 'a': { 'b': 2 } };
+    let other = _.create({ 'a': _.create({ 'b': 2 }) });
+    let another = _.clone(other);
+
+    console.log( object, _.has(object, 'a') );  // => true
+    console.log( object, _.has(object, 'a.b') );   // => true
+    console.log( object, _.has(object, ['a', 'b']) );   // => true
+    console.log( other, _.has(other, 'a') );    // => false
+    // console.log( other.a, _.values(other) );
+    console.log( another.a, _.values(another) );
+
+    let users = [
+      { 'user': 'barney',  'age': 36, 'active': true, 'data': {'labels':['product']} },
+      { 'user': 'fred',    'age': 40, 'active': false, 'data': {'labels':['customer']} },
+      { 'user': 'pebbles', 'age': 1,  'active': true, 'data': {'labels':['order','product']} }
+    ];    
+    console.log( _.find(users, { 'data': {'labels':['product'] }}) );
   }
 
   graphJson02(){
@@ -46,6 +69,7 @@ export class RxjsTutorialsComponent implements AfterViewInit, OnDestroy {
   }
 
   graphJson01(){
+    /*
     let source = this.graphService.getData().pipe(
       map(x => x.elements),
       map(x => x.nodes),
@@ -55,6 +79,17 @@ export class RxjsTutorialsComponent implements AfterViewInit, OnDestroy {
       filter(x => x.labels.includes('product')),
       take(5)
       );
+    */
+    let source = this.graphService.getData().pipe(
+      filter(x => _.has(x, 'elements.nodes')),
+      map(x => x.elements.nodes),
+      tap(x => console.log( `nodes size = ${x.length}` )),
+      concatAll(),    // 이거 안하면 undefined 출력됨 <== [[...]] 을 [...] 으로 변환
+      map(x => x['data']),
+      filter(x => x.labels.includes('product')),
+      take(5)
+      );
+  
     source.subscribe(x => console.log( x )).unsubscribe();
   }
 

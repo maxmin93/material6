@@ -1,9 +1,10 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 
 import { Observable, BehaviorSubject, Subject, ReplaySubject } from 'rxjs';
-import { from, of, range, fromEvent, timer, interval, empty  } from 'rxjs';
-import { map, filter, switchMap, flatMap, zip, retryWhen, take } from 'rxjs/operators';
-import { combineAll } from 'rxjs/operators';
+import { from, of, range, fromEvent, timer, interval, empty, iif } from 'rxjs';
+import { merge, zip } from 'rxjs';
+import { tap, map, filter, switchMap, flatMap, retryWhen, take } from 'rxjs/operators';
+import { concat, concatAll, combineAll, defaultIfEmpty, mergeMap, groupBy, toArray } from 'rxjs/operators';
 
 import { GraphDataService } from '../services/graph-data.service';
 
@@ -12,7 +13,7 @@ import { GraphDataService } from '../services/graph-data.service';
   templateUrl: './rxjs-tutorials.component.html',
   styleUrls: ['./rxjs-tutorials.component.css']
 })
-export class RxjsTutorialsComponent implements AfterViewInit {
+export class RxjsTutorialsComponent implements AfterViewInit, OnDestroy {
 
   constructor( private graphService: GraphDataService ) { }
 
@@ -25,11 +26,36 @@ export class RxjsTutorialsComponent implements AfterViewInit {
     this.tutorial06();
   }
 
-  readGraphData(){
-    this.graphService.getData().pipe(
-      filter( data => data.hasOwnProperty('elements') ? data.elements : empty() ),
-      map( data => data. )  
-    )
+  ngOnDestroy(){
+  }
+
+  graphJson02(){
+    let source$ = this.graphService.getData().pipe(
+      map(x => x.elements),
+      tap(x => console.log( `nodes exists: ${x.hasOwnProperty('nodes')}, edges exists: ${x.hasOwnProperty('edges')}`))
+    );
+    let nodes$ = source$.pipe( map(x => x.nodes), concatAll(), map(x => x['data']), take(5) );
+    let edges$ = source$.pipe( map(x => x.edges), concatAll(), map(x => x['data']), take(5) );
+
+    // nodes$.subscribe(x => console.log( 'nodes:', x )).unsubscribe();
+    // edges$.subscribe(x => console.log( 'edges:', x )).unsubscribe();
+    // let elements$ = Observable.create().pipe( merge( nodes$, edges$ ), concatAll() );
+
+    let elements$ = zip( nodes$, edges$ ).pipe( concatAll() );
+    elements$.subscribe(x => console.log( x )).unsubscribe();
+  }
+
+  graphJson01(){
+    let source = this.graphService.getData().pipe(
+      map(x => x.elements),
+      map(x => x.nodes),
+      tap(x => console.log( `nodes size = ${x.length}` )),
+      concatAll(),    // 이거 안하면 undefined 출력됨 <== [[...]] 을 [...] 으로 변환
+      map(x => x['data']),
+      filter(x => x.labels.includes('product')),
+      take(5)
+      );
+    source.subscribe(x => console.log( x )).unsubscribe();
   }
 
   tutorial01(){
@@ -83,7 +109,7 @@ export class RxjsTutorialsComponent implements AfterViewInit {
     mySubject.next(3);
     subscriptionB.unsubscribe();
   }
-
+/*
   tutorial05(){
     function identity(x) { return x*2; }
 
@@ -92,7 +118,7 @@ export class RxjsTutorialsComponent implements AfterViewInit {
           o.onError(new Error('always fails'));
       }).pipe( 
         retryWhen( attempts => range(1, 3).pipe(
-          zip(attempts, identity),
+          zip(attempts, identity),    // rxjs 6 에서는 오류!
           flatMap(i => {
             console.log('delay retry by ' + i + ' second(s)');
             return timer(i * 500);
@@ -102,15 +128,16 @@ export class RxjsTutorialsComponent implements AfterViewInit {
     
     myObservable.subscribe();
   }
-
+*/
   tutorial06(){
-    const source = interval(1000).pipe( take(2) );
+    const source = interval(500).pipe( take(2) );
     const example = source.pipe(
-      map(val => interval(1000).pipe(
-        map(i => `Result(${val}): ${i}`), take(5)
+      map(val => interval(400).pipe(
+        map(i => `Result(${val}): ${i}`), take(4)
       ))
     );
     const combined = example.pipe( combineAll() );
     const subscribe = combined.subscribe(val => console.log(val));
+    // subscribe.unsubscribe();
   }
 }

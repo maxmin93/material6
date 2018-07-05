@@ -29,6 +29,7 @@ import { WebsocketComponent } from './websocket/websocket.component';
 import { NgxTableComponent } from './ngx-table/ngx-table.component';
 import { CytoGraphComponent } from './cyto-graph/cyto-graph.component';
 import { RxjsTutorialsComponent } from './rxjs-tutorials/rxjs-tutorials.component';
+import { CytoStreamComponent } from './cyto-stream/cyto-stream.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { RxjsTutorialsComponent } from './rxjs-tutorials/rxjs-tutorials.componen
     WebsocketComponent,
     NgxTableComponent,
     CytoGraphComponent,
-    RxjsTutorialsComponent
+    RxjsTutorialsComponent,
+    CytoStreamComponent
   ],
   imports: [
     BrowserModule,

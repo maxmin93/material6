@@ -23,7 +23,20 @@ export class RxjsTutorialsComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    // this.lodash01();
+    this.lodash02();
+  }
+
+  lodash02(){
+    var users = {
+      'user01': { 'name': 'fred',    'age': 40 },
+      'user02': { 'name': 'pebbles', 'age': 1  }
+    };
+
+    console.log( _.mapValues(users, function(o) { return o.age; }) );
+    // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
+     
+    // The `_.property` iteratee shorthand.
+    console.log( _.mapValues(users, 'age') );
   }
 
   lodash01(){

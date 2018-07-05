@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { of, from, Observable } from 'rxjs';
+import { of, from, Observable, Subject } from 'rxjs';
+import { shareReplay, publishReplay } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -17,39 +18,40 @@ export class GraphDataService {
   }
 
   getStream(): Observable<any[]> {
+    console.log( 'http get => stream1' );
     return from(GRAPH_STREAM);
+  }
+
+  getStreams(meta$:Subject<any>, nodes$:Subject<any>, edges$:Subject<any>) {
+    console.log( 'http get => stream2' );
+
+    from(GRAPH_STREAM).subscribe({
+      next: x => {
+          if( x.hasOwnProperty('group') ){
+            switch( x['group'] ){
+              case 'nodes': nodes$.next(x); break;
+              case 'edges': edges$.next(x); break;
+              case 'meta': meta$.next(x); break;
+            }
+          }
+      },
+      error: e => console.log( 'ERROR: getStreams()', e.hasOwnProperty('message') ? e.message : e ),
+      complete: () => {
+        nodes$.complete();
+        edges$.complete();
+        meta$.complete();
+      }
+    });
   }
 
 }
 
 const GRAPH_STREAM:any[] = [
   { "group":"meta"
-    , "style":[
-      {"selector":"core","style":{"selection-box-color":"#11bf1c","selection-box-opacity":"0.25","selection-box-border-color":"#aaa","selection-box-border-width":"1px"}}
-      ,{"selector":"node","style":{"label":"fn","text-wrap":"wrap","text-max-width":"75px","text-halign":"center","text-valign":"center","color":"white","font-weight":"400","font-size":"12px","text-opacity":"1","background-color":"fn","width":"fn","height":"fn","border-width":"3px","border-color":"#5fa9dc"}}
-      ,{"selector":"node:selected","style":{"background-color":"white","color":"#68bdf6","target-arrow-color":"#a5abb6","source-arrow-color":"#a5abb6","line-color":"#a5abb6","border-style":"dashed","border-color":"#68bdf6","border-width":"3px"}}
-      ,{"selector":"node:locked","style":{"background-color":"#d64937","text-outline-color":"#d64937","color":"white","border-color":"#d64937","border-width":"3px","opacity":"1"}}
-      ,{"selector":"node.expand","style":{"opacity":"0.6","color":"black","background-color":"darkorange","width":"40px","height":"40px","border-color":"orange"}}
-      ,{"selector":"edge","style":{"label":"fn","text-rotation":"autorotate","text-margin-y":"-10px","color":"#c8c8c8","opacity":"1","line-color":"fn","line-style":"solid","width":"fn","curve-style":"bezier","target-arrow-shape":"triangle","target-arrow-color":"fn","source-arrow-shape":"none","source-arrow-color":"fn","font-size":"12px"}}
-      ,{"selector":"edge:selected","style":{"background-color":"#ffffff","target-arrow-color":"#483d41","source-arrow-color":"#483d41","line-color":"#483d41","width":"12px","opacity":"1","color":"#483d41","text-margin-y":"-15px","text-outline-width":"2px","text-outline-color":"white"}}
-      ,{"selector":"edge:locked","style":{"opacity":"1","line-color":"#433f40","target-arrow-color":"#433f40","source-arrow-color":"#433f40"}}
-      ,{"selector":"edge.expand","style":{"border-style":"double","opacity":"0.6","line-color":"orange","target-arrow-color":"orange","source-arrow-color":"orange"}}
-      ,{"selector":".highlighted","style":{"background-color":"#fff","width":"65px","height":"65px","color":"#5fa9dc","target-arrow-color":"#a5abb6","source-arrow-color":"#a5abb6","line-color":"#a5abb6","border-style":"solid","border-color":"#5fa9dc","border-width":"4px","transition-property":"background-color, line-color, target-arrow-color","transition-duration":"0.2s"}}
-      ,{"selector":"edge.highlighted","style":{"width":"1px","text-outline-width":"0px","line-style":"dashed","color":"#83878d","line-color":"#83878d","target-arrow-color":"#83878d","source-arrow-color":"#83878d"}}
-      ,{"selector":".traveled","style":{"background-color":"#11bf1c","line-color":"#11bf1c","target-arrow-color":"black","transition-property":"background-color, line-color, target-arrow-color","transition-duration":"0.2s"}}
-      ,{"selector":".edgehandles-hover","style":{"background-color":"#d80001"}}
-      ,{"selector":".edgehandles-source","style":{"border-width":"10px","border-color":"#d80001","background-color":"#d80001","text-outline-color":"#d80001"}}
-      ,{"selector":".edgehandles-target","style":{"border-width":"2px","border-color":"white","text-outline-color":"#d80001"}}
-      ,{"selector":".edgehandles-preview, .edgehandles-ghost-edge","style":{"line-color":"#d80001","target-arrow-color":"#d80001","source-arrow-color":"#d80001"}}
-      ,{"selector":"node.highlighted","style":{}}
-      ,{"selector":"node.unhighlighted","style":{"opacity":"0.3"}}
-      ,{"selector":"edge.highlighted","style":{}}
-      ,{"selector":"edge.unhighlighted","style":{"opacity":"0.3"}}
-    ]
-    ,"zoomingEnabled":true,"userZoomingEnabled":false,"zoom":0.3311484685122915,"minZoom":0.01,"maxZoom":10
-    ,"panningEnabled":true,"userPanningEnabled":true,"pan":{"x":282.1003262523407,"y":53.12195599044884}
-    ,"boxSelectionEnabled":true,"renderer":{"name":"canvas"}
-    ,"hideEdgesOnViewport":true,"textureOnViewport":false,"wheelSensitivity":0.7,"motionBlur":false
+    , "summary": {
+      "sql": "match path=()-[]->()-[]->() return path limit 1000;",
+      "nodesCount": 139, "edgesCount": 157, "labelsCount": 5
+    }
     ,"labels":[
       {"owner":"agraph","size":100,"neighbors":["product","order"]
         ,"name":"orders","is_dirty":false,"oid":"18","type":"EDGE","size_not_empty":100

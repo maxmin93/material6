@@ -1,0 +1,23 @@
+<p>
+  cyto-stream works!
+</p>
+<p>
+  <button mat-raised-button color="primary" (click)="clearCanvas()">Clear</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="accent" (click)="loadNodes()">Nodes</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="accent" (click)="loadEdges()">Edges</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="warn" (click)="loadElements()">Elements</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="warn" (click)="loadStreams()">Streams</button>
+  <span>&nbsp;</span>
+</p>
+<div class="wrapped-box">
+  <div #progressBar style='visibility:hidden;'>
+      <mat-progress-bar color="accent" mode="indeterminate">Loading...</mat-progress-bar>
+  </div>            
+
+  <!-- Graph content -->
+  <div class="gra_content" #divGraph></div>
+</div>

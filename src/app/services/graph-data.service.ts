@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { of, from, Observable, Subject } from 'rxjs';
-import { shareReplay, publishReplay } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -23,9 +23,11 @@ export class GraphDataService {
   }
 
   getStreams(meta$:Subject<any>, nodes$:Subject<any>, edges$:Subject<any>) {
-    console.log( 'http get => stream2' );
+    console.log( 'http call => stream data' );
 
-    from(GRAPH_STREAM).subscribe({
+    from(GRAPH_STREAM)
+    // .pipe( tap( ()=> console.log( 'http call => stream data' ) ))
+    .subscribe({
       next: x => {
           if( x.hasOwnProperty('group') ){
             switch( x['group'] ){

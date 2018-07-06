@@ -59,8 +59,51 @@ export class RxjsTutorialsComponent implements AfterViewInit, OnDestroy {
     console.log( _.find(users, { 'data': {'labels':['product'] }}) );
   }
 
+  graphJson05(){
+
+
+  }
+
   graphJson04(){
 
+    const log = console.log;
+
+    function makeAllStream(data){
+      // log( 'http call ==> Observable<any[]>' );
+      // return from(data);
+      return from(data).pipe( tap(() => console.log( 'http call ==> Observable<any[]>' )) );
+    }
+
+    function makeSubStream($all, predicates){
+      return Object.keys(predicates).reduce( (memo, v) => {
+          memo[v] = $all.pipe( filter(predicates[v]) );
+          return memo;
+      },{});
+    }
+
+    function processData(data) {
+      log('process begin ------------');     
+      const $all:Observable<any> = makeAllStream(data);
+
+      let streams = makeSubStream($all, {
+        $metaStream: d=>d.type=='meta',
+        $vertexStream: d=>d.type=='vertex',
+        $edgeStream: d=>d.type=='edge',
+        // $vertexNedge: d=>d.type=='edge' || d.type=='vertex'
+      });
+      log( streams );
+
+      $all.subscribe(item=>log('$all',item));
+      streams['$metaStream'].subscribe(item=>log('$metaStream',item));
+      streams['$vertexStream'].subscribe(item=>log('$vertexStream',item));
+      streams['$edgeStream'].subscribe(item=>log('$edgeStream',item));
+      // streams['$vertexNedge'].subscribe(item=>log('$vertexNedge',item));
+
+      log('process end ------------');
+    }
+
+    // processData(data);
+    processData(mixedData);
   }
 
   graphJson03(){
@@ -367,3 +410,34 @@ export class RxjsTutorialsComponent implements AfterViewInit, OnDestroy {
   }
 }
 
+const data = [
+  {type:'meta', data:{a:1,b:2}},
+  {type:'vertex', data:{id:'1', props:{p1:1, p2:2, p3:3}}},
+  {type:'vertex', data:{id:'2', props:{p1:1, p2:2, p3:3}}},
+  {type:'vertex', data:{id:'3', props:{p1:1, p2:2, p3:3}}},
+  {type:'vertex', data:{id:'4', props:{p1:1, p2:2, p3:3}}},
+  {type:'vertex', data:{id:'5', props:{p1:1, p2:2, p3:3}}},
+  {type:'vertex', data:{id:'6', props:{p1:1, p2:2, p3:3}}},
+  {type:'edge', data:{from:'1', to:'2', props:{p1:1, p2:2, p3:3}}},
+  {type:'edge', data:{from:'2', to:'3', props:{p1:1, p2:2, p3:3}}},
+  {type:'edge', data:{from:'3', to:'4', props:{p1:1, p2:2, p3:3}}},
+  {type:'edge', data:{from:'4', to:'5', props:{p1:1, p2:2, p3:3}}},
+  {type:'edge', data:{from:'5', to:'3', props:{p1:1, p2:2, p3:3}}},
+  {type:'edge', data:{from:'2', to:'6', props:{p1:1, p2:2, p3:3}}},
+];
+
+const mixedData = [
+  {type:'meta', data:{a:1,b:2}},
+  {type:'vertex', data:{id:'1', props:{p1:1, p2:2, p3:3}}},
+  {type:'vertex', data:{id:'2', props:{p1:1, p2:2, p3:3}}},
+  {type:'vertex', data:{id:'3', props:{p1:1, p2:2, p3:3}}},
+  {type:'edge', data:{from:'1', to:'2', props:{p1:1, p2:2, p3:3}}},
+  {type:'edge', data:{from:'2', to:'3', props:{p1:1, p2:2, p3:3}}},
+  {type:'edge', data:{from:'3', to:'4', props:{p1:1, p2:2, p3:3}}},
+  {type:'vertex', data:{id:'4', props:{p1:1, p2:2, p3:3}}},
+  {type:'vertex', data:{id:'5', props:{p1:1, p2:2, p3:3}}},
+  {type:'vertex', data:{id:'6', props:{p1:1, p2:2, p3:3}}},
+  {type:'edge', data:{from:'4', to:'5', props:{p1:1, p2:2, p3:3}}},
+  {type:'edge', data:{from:'5', to:'3', props:{p1:1, p2:2, p3:3}}},
+  {type:'edge', data:{from:'2', to:'6', props:{p1:1, p2:2, p3:3}}},
+];

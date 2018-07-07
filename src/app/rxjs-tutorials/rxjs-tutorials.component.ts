@@ -2,9 +2,9 @@ import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 
 import { Observable, BehaviorSubject, Subject, ReplaySubject } from 'rxjs';
 import { from, of, range, fromEvent, timer, interval, empty, iif } from 'rxjs';
-import { merge, zip, forkJoin } from 'rxjs';
-import { tap, map, filter, switchMap, flatMap, retryWhen, take, publishReplay } from 'rxjs/operators';
-import { concat, concatAll, combineAll, defaultIfEmpty, mergeMap, groupBy, toArray } from 'rxjs/operators';
+import { merge, zip, forkJoin, concat } from 'rxjs';
+import { tap, map, filter, take } from 'rxjs/operators';
+import { concatAll, combineAll, defaultIfEmpty, mergeMap, groupBy, toArray } from 'rxjs/operators';
 
 import { GraphDataService } from '../services/graph-data.service';
 
@@ -23,7 +23,7 @@ export class RxjsTutorialsComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.lodash02();
+    // this.lodash02();
   }
 
   lodash02(){
@@ -59,9 +59,60 @@ export class RxjsTutorialsComponent implements AfterViewInit, OnDestroy {
     console.log( _.find(users, { 'data': {'labels':['product'] }}) );
   }
 
+  graphJson06(){
+    let schema$ = new Subject<any>(), graph$ = new Subject<any>(), 
+        labels$ = new Subject<any>(), nodes$ = new Subject<any>(), edges$ = new Subject<any>();
+
+    schema$.subscribe({
+      next: x => console.log('schema$:', x.message)
+    });
+    graph$.subscribe({
+      next: x => console.log('graph$:', x.nodes_size, x.edges_size)
+    });
+    labels$.subscribe({
+      next: x => console.log('labels$:', x.name)
+    });
+    nodes$.pipe( take(5) ).subscribe({
+      next: x => console.log('nodes$:', x.data.id, x.data.name)
+    });
+    edges$.pipe( take(5) ).subscribe({
+      next: x => console.log('edges$:', x.data.id, x.data.name)
+    });
+    
+    concat( schema$.asObservable(), graph$.asObservable(), labels$.asObservable(), nodes$.asObservable(), edges$.asObservable() )
+    .subscribe({
+      next: x => { if( _.isFunction(x) ) x(); },
+      complete: () => console.log('Completed!!')
+    });
+
+    let subscription = this.graphService.getHttpStream( schema$, graph$, labels$, nodes$, edges$ );
+  }
+
   graphJson05(){
+    let data$ = this.graphService.getHttpData().pipe( concatAll(), filter(x => x.hasOwnProperty('group')) );
 
+    let schema$ = data$.pipe( filter(x => x.group == 'schema') );
+    let graph$ = data$.pipe( filter(x => x.group == 'graph') );
+    let labels$ = data$.pipe( filter(x => x.group == 'labels') );
+    let nodes$ = data$.pipe( filter(x => x.group == 'nodes') );
+    let edges$ = data$.pipe( filter(x => x.group == 'edges') );
 
+    // http call => 5 times
+    schema$.subscribe({
+      next: x => console.log('schema$:', x.message)
+    });
+    graph$.subscribe({
+      next: x => console.log('graph$:', x.nodes_size, x.edges_size)
+    });
+    labels$.subscribe({
+      next: x => console.log('labels$:', x.name)
+    });
+    nodes$.pipe( take(5) ).subscribe({
+      next: x => console.log('nodes$:', x.data.id, x.data.name)
+    });
+    edges$.pipe( take(5) ).subscribe({
+      next: x => console.log('edges$:', x.data.id, x.data.name)
+    });
   }
 
   graphJson04(){

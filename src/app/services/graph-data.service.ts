@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 
-import { of, from, Observable, Subject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { of, from, Observable, Subject, Subscription } from 'rxjs';
+import { tap, concatAll, filter } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +12,45 @@ export class GraphDataService {
   constructor(
     private http: HttpClient
   ) { }
+
+  private createAuthorizationHeader():HttpHeaders {
+    let ssid:string = '1234567890'; // localStorage.getItem('agens-ssid');
+    return new HttpHeaders({'Content-Type': 'application/json', 'Authorization':ssid});
+  }
+
+  getHttpStream(
+    schema$:Subject<any>, graph$:Subject<any>, 
+    labels$:Subject<any>, nodes$:Subject<any>, edges$:Subject<any>
+  ):Subscription {
+    const url = `http://localhost:8085/api/core/schema`;
+
+    return this.http.get<any[]>(url, {headers: this.createAuthorizationHeader()})
+      .pipe( tap(x => console.log('http client =>',x)), concatAll(), filter(x => x.hasOwnProperty('group')) )
+      .subscribe({
+        next: x => {
+              switch( x['group'] ){
+                case 'schema': schema$.next(x); break;
+                case 'graph': graph$.next(x); break;
+                case 'labels': labels$.next(x); break;
+                case 'nodes': nodes$.next(x); break;
+                case 'edges': edges$.next(x); break;
+            }
+        },
+        error: e => console.log( 'ERROR: getStreams()', e.hasOwnProperty('message') ? e.message : e ),
+        complete: () => {
+          schema$.complete();
+          graph$.complete();
+          labels$.complete();
+          nodes$.complete();
+          edges$.complete();
+        }
+      });
+  }
+
+  getHttpData(): Observable<any[]>{
+    const url = `http://localhost:8085/api/core/schema`;
+    return this.http.get<any[]>(url, {headers: this.createAuthorizationHeader()});
+  }
 
   getData(): Observable<any>{
     return of(GRAPH_DATA);

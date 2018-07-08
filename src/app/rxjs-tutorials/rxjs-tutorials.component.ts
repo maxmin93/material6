@@ -7,6 +7,7 @@ import { tap, map, filter, take } from 'rxjs/operators';
 import { concatAll, combineAll, defaultIfEmpty, mergeMap, groupBy, toArray } from 'rxjs/operators';
 
 import { GraphDataService } from '../services/graph-data.service';
+import { ApiService } from '../services/api.service';
 
 import * as _ from 'lodash';
 
@@ -17,7 +18,7 @@ import * as _ from 'lodash';
 })
 export class RxjsTutorialsComponent implements AfterViewInit, OnDestroy {
 
-  constructor( private graphService: GraphDataService ) { }
+  constructor( private graphService: GraphDataService, private apiService: ApiService ) { }
 
   ngOnDestroy(){
   }
@@ -57,6 +58,17 @@ export class RxjsTutorialsComponent implements AfterViewInit, OnDestroy {
       { 'user': 'pebbles', 'age': 1,  'active': true, 'data': {'labels':['order','product']} }
     ];    
     console.log( _.find(users, { 'data': {'labels':['product'] }}) );
+  }
+
+  graphStream01(){
+    let customer$:Observable<any> = this.apiService.getHttpData().pipe(
+      concatAll(), // tap(x => console.log( x['age'], '=', x['age'] % 10) ), 
+      filter(x => (x['age'] % 10) == 0 )
+    );
+    
+    customer$.subscribe({
+      next: x => console.log('item:', x)
+    });
   }
 
   graphJson06(){

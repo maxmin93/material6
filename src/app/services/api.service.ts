@@ -1,17 +1,32 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from "rxjs";
+
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+
+import { of, from, Observable, Subject, Subscription } from 'rxjs';
+import { tap, concatAll, filter } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
+
+  private createAuthorizationHeader():HttpHeaders {
+    let ssid:string = '1234567890'; // localStorage.getItem('agens-ssid');
+    return new HttpHeaders({'Content-Type': 'application/json', 'Authorization':ssid});
+  }
 
   public getPeriodics(): Observable<PeriodicElement[]> {
     let elements : PeriodicElement[] = ELEMENT_DATA;
     return Observable.create(of(elements)).delay(500);
   }  
+
+  getHttpData(): Observable<any>{
+    const url = `http://localhost:8080/api/web01/`;
+    return this.http.get<any>(url, {headers: this.createAuthorizationHeader()});
+  }
+
 }
 
 /////////////////////////////////////////////////////////////

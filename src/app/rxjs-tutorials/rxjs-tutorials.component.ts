@@ -27,41 +27,11 @@ export class RxjsTutorialsComponent implements AfterViewInit, OnDestroy {
     // this.lodash02();
   }
 
-  lodash02(){
-    var users = {
-      'user01': { 'name': 'fred',    'age': 40 },
-      'user02': { 'name': 'pebbles', 'age': 1  }
-    };
-
-    console.log( _.mapValues(users, function(o) { return o.age; }) );
-    // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
-     
-    // The `_.property` iteratee shorthand.
-    console.log( _.mapValues(users, 'age') );
-  }
-
-  lodash01(){
-    let object = { 'a': { 'b': 2 } };
-    let other = _.create({ 'a': _.create({ 'b': 2 }) });
-    let another = _.clone(other);
-
-    console.log( object, _.has(object, 'a') );  // => true
-    console.log( object, _.has(object, 'a.b') );   // => true
-    console.log( object, _.has(object, ['a', 'b']) );   // => true
-    console.log( other, _.has(other, 'a') );    // => false
-    // console.log( other.a, _.values(other) );
-    console.log( another.a, _.values(another) );
-
-    let users = [
-      { 'user': 'barney',  'age': 36, 'active': true, 'data': {'labels':['product']} },
-      { 'user': 'fred',    'age': 40, 'active': false, 'data': {'labels':['customer']} },
-      { 'user': 'pebbles', 'age': 1,  'active': true, 'data': {'labels':['order','product']} }
-    ];    
-    console.log( _.find(users, { 'data': {'labels':['product'] }}) );
-  }
+  //////////////////////////////////////////////////////////////
 
   graphStream01(){
     let customer$:Observable<any> = this.apiService.getHttpData().pipe(
+      tap(console.log),
       concatAll(), // tap(x => console.log( x['age'], '=', x['age'] % 10) ), 
       filter(x => (x['age'] % 10) == 0 )
     );
@@ -70,6 +40,20 @@ export class RxjsTutorialsComponent implements AfterViewInit, OnDestroy {
       next: x => console.log('item:', x)
     });
   }
+
+  graphStream02(){
+    let customer$:Observable<any> = this.apiService.getHttpData2().pipe(
+      tap(console.log),
+      concatAll(), // tap(x => console.log( x['age'], '=', x['age'] % 10) ), 
+      filter(x => (x['age'] % 10) == 0 )
+    );
+    
+    customer$.subscribe({
+      next: x => console.log('item:', x)
+    });
+  }
+
+  //////////////////////////////////////////////////////////////
 
   graphJson06(){
     let schema$ = new Subject<any>(), graph$ = new Subject<any>(), 
@@ -250,6 +234,43 @@ export class RxjsTutorialsComponent implements AfterViewInit, OnDestroy {
   
     source.subscribe(x => console.log( x )).unsubscribe();
   }
+
+  //////////////////////////////////////////////////////////////
+
+  lodash02(){
+    var users = {
+      'user01': { 'name': 'fred',    'age': 40 },
+      'user02': { 'name': 'pebbles', 'age': 1  }
+    };
+
+    console.log( _.mapValues(users, function(o) { return o.age; }) );
+    // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
+     
+    // The `_.property` iteratee shorthand.
+    console.log( _.mapValues(users, 'age') );
+  }
+
+  lodash01(){
+    let object = { 'a': { 'b': 2 } };
+    let other = _.create({ 'a': _.create({ 'b': 2 }) });
+    let another = _.clone(other);
+
+    console.log( object, _.has(object, 'a') );  // => true
+    console.log( object, _.has(object, 'a.b') );   // => true
+    console.log( object, _.has(object, ['a', 'b']) );   // => true
+    console.log( other, _.has(other, 'a') );    // => false
+    // console.log( other.a, _.values(other) );
+    console.log( another.a, _.values(another) );
+
+    let users = [
+      { 'user': 'barney',  'age': 36, 'active': true, 'data': {'labels':['product']} },
+      { 'user': 'fred',    'age': 40, 'active': false, 'data': {'labels':['customer']} },
+      { 'user': 'pebbles', 'age': 1,  'active': true, 'data': {'labels':['order','product']} }
+    ];    
+    console.log( _.find(users, { 'data': {'labels':['product'] }}) );
+  }
+
+  //////////////////////////////////////////////////////////////
 
   tutorial01(){
     range(1, 200)

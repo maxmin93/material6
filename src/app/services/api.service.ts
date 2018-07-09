@@ -22,6 +22,11 @@ export class ApiService {
     return Observable.create(of(elements)).delay(500);
   }  
 
+  getHttpData2(): Observable<any>{
+    const url = `http://localhost:8080/api/customer`;
+    return this.http.get<any>(url, {headers: this.createAuthorizationHeader()});
+  }
+
   getHttpData(): Observable<any>{
     const url = `http://localhost:8080/api/web01/`;
     return this.http.get<any>(url, {headers: this.createAuthorizationHeader()});

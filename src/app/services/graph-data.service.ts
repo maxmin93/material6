@@ -22,7 +22,7 @@ export class GraphDataService {
     schema$:Subject<any>, graph$:Subject<any>, 
     labels$:Subject<any>, nodes$:Subject<any>, edges$:Subject<any>
   ):Subscription {
-    const url = `http://localhost:8085/api/core/schema`;
+    const url = `http://localhost:8085/api/core/schema-mono`;
 
     return this.http.get<any[]>(url, {headers: this.createAuthorizationHeader()})
       .pipe( tap(x => console.log('http client =>',x)), concatAll(), filter(x => x.hasOwnProperty('group')) )

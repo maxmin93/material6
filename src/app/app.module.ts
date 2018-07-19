@@ -31,6 +31,8 @@ import { CytoGraphComponent } from './cyto-graph/cyto-graph.component';
 import { RxjsTutorialsComponent } from './rxjs-tutorials/rxjs-tutorials.component';
 import { CytoStreamComponent } from './cyto-stream/cyto-stream.component';
 
+import { QueryStateComponent } from './ngx-table/components/query-state.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -39,7 +41,9 @@ import { CytoStreamComponent } from './cyto-stream/cyto-stream.component';
     NgxTableComponent,
     CytoGraphComponent,
     RxjsTutorialsComponent,
-    CytoStreamComponent
+    CytoStreamComponent,
+
+    QueryStateComponent
   ],
   imports: [
     BrowserModule,

@@ -38,12 +38,16 @@ import { Observable, timer, Subscription } from 'node_modules/rxjs';
 })
 export class QueryStateComponent implements OnInit, OnDestroy {
 
+  messageText: string = '';
+  messageColor: string = '';        // error: '#ea614a'
+
   private _dto: IResponseDto;
-  private messageText: string = '';
-  private messageColor: string = '';        // error: '#ea614a'
+
+  @Input() limitTime: number = 30;    // limitTime : sec
+
+  @Output() overTime: EventEmitter<any> = new EventEmitter();
 
   private elapsedTimeText: string = '';
-  private elapsedTime$: Observable<number>;
   private elapsedTimeSubscription: Subscription = undefined;
 
   @ViewChild('progressBar') progressBar: ElementRef;
@@ -60,8 +64,6 @@ export class QueryStateComponent implements OnInit, OnDestroy {
 
   ///////////////////////////////////////////////
 
-  @Input() limitTime: number = 30;    // limitTime : sec
-
   get dto():IResponseDto {
     return this._dto;
   }
@@ -70,9 +72,6 @@ export class QueryStateComponent implements OnInit, OnDestroy {
   set dto(dto: IResponseDto){
     this._dto = dto;
   }
-
-  @Output()
-  overTime: EventEmitter<any> = new EventEmitter();
 
   ///////////////////////////////////////////////
 

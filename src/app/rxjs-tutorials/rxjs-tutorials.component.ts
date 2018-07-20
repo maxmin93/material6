@@ -323,26 +323,27 @@ export class RxjsTutorialsComponent implements AfterViewInit, OnDestroy {
     mySubject.next(3);
     subscriptionB.unsubscribe();
   }
-/*
-  tutorial05(){
-    function identity(x) { return x*2; }
 
-    const myObservable = Observable.create(o => {
-          console.log('subscribing');
-          o.onError(new Error('always fails'));
-      }).pipe( 
-        retryWhen( attempts => range(1, 3).pipe(
-          zip(attempts, identity),    // rxjs 6 에서는 오류!
-          flatMap(i => {
-            console.log('delay retry by ' + i + ' second(s)');
-            return timer(i * 500);
-          }) 
-        ))
-      );
-    
-    myObservable.subscribe();
+  tutorial05(){
+    // 스트림 시작
+    const observable = Observable.create((observer) => {
+      observer.next(Math.random());
+    });
+  
+    const subject = new Subject();
+      // subscriber 1
+    subject.subscribe((data) => {
+        console.log(data); // 0.24957144215097515 (random number)
+    });
+      // subscriber 2
+    subject.subscribe((data) => {
+        console.log(data); // 0.24957144215097515 (random number)
+    });
+  
+    // 스트림 격발 (트리거)
+    observable.subscribe(subject);    
   }
-*/
+
   tutorial06(){
     const source = interval(500).pipe( take(2) );
     const example = source.pipe(
@@ -473,25 +474,6 @@ export class RxjsTutorialsComponent implements AfterViewInit, OnDestroy {
     trigger('TEST');
   }
 
-  tutorial10(){
-    // 스트림 시작
-    const observable = Observable.create((observer) => {
-      observer.next(Math.random());
-    });
-  
-    const subject = new Subject();
-      // subscriber 1
-    subject.subscribe((data) => {
-        console.log(data); // 0.24957144215097515 (random number)
-    });
-      // subscriber 2
-    subject.subscribe((data) => {
-        console.log(data); // 0.24957144215097515 (random number)
-    });
-  
-    // 스트림 격발 (트리거)
-    observable.subscribe(subject);    
-  }
 }
 
 const data = [

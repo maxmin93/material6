@@ -4,7 +4,7 @@ import { ViewChild, ElementRef, NgZone } from '@angular/core';
 import { Observable, Subject, Subscription, concat } from 'rxjs';
 import { from, of, range, fromEvent, timer, interval, empty, iif } from 'rxjs';
 import { merge, zip, forkJoin } from 'rxjs';
-import { tap, map, filter, switchMap, flatMap, retryWhen, take, publishReplay } from 'rxjs/operators';
+import { tap, map, filter, switchMap, flatMap, retryWhen, take, publishReplay, concatMap } from 'rxjs/operators';
 import { concatAll, combineAll, defaultIfEmpty, mergeMap, groupBy, toArray } from 'rxjs/operators';
 
 import { GraphDataService } from '../services/graph-data.service';
@@ -104,13 +104,56 @@ export class CytoStreamComponent implements OnInit, OnDestroy {
     this.canvas.elements().remove();
   }
 
+  loadStreams3(){
+    this.clearCanvas();
+
+    let data$ = this.graphService.getStreams3();
+    data$.subscribe((g) => {
+      if( g.key == 'nodes' ) g.subscribe(x => this.canvas.add(x))
+      else if( g.key == 'edges' ) g.subscribe(x => this.canvas.add(x))
+      else if( g.key == 'meta' ) 
+        g.pipe( filter(x => x['group'] == 'meta'), map(x => x['labels'] ), concatAll() )
+        .subscribe(x => console.log( '=> label:', x ))
+    },
+    err => {},
+    () => {
+      console.log('loadStreams3 completed!!')
+    });
+    
+  }
+
+  loadStreams2(){
+    this.clearCanvas();
+
+    let data$ = this.graphService.getStreams2();
+
+    let nodes$ = data$.pipe( filter(x => x['group'] == 'nodes') ).subscribe(
+      x => this.canvas.add(x)
+      , console.log
+      , () => console.log( '[1] nodes$ completed!')
+    );
+    let edges$ = data$.pipe( filter(x => x['group'] == 'edges') ).subscribe(
+      x => this.canvas.add(x)
+      , console.log
+      , () => console.log( '[2] edges$ completed!')
+    );
+    let meta$ = data$.pipe( filter(x => x['group'] == 'meta'), map(x => x['labels'] ), concatAll() ).subscribe(
+      x => console.log( '=> label:', x )
+      , console.log
+      , () => console.log( '[3] meta$ completed!')
+    );  
+  }
+
   loadStreams(){
+    this.clearCanvas();
+
     let ready$ = of(()=>{
       console.log( 'ready function' );
       this.toggleProgress(true);
     });
 
     let meta$ = new Subject(), nodes$ = new Subject(), edges$ = new Subject();
+
     nodes$.subscribe( x => this.canvas.add(x) );
     edges$.subscribe( x => this.canvas.add(x) );
     meta$.pipe(
@@ -137,6 +180,7 @@ export class CytoStreamComponent implements OnInit, OnDestroy {
     let ready$ = of(()=>{
       console.log( 'ready function' );
       this.toggleProgress(true);
+      this.clearCanvas();
     });
     let nodes$ = this.graphService.getStream().pipe(
       filter(x => x.hasOwnProperty('group') && x['group'] == 'nodes' )

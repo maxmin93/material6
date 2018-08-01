@@ -51,6 +51,7 @@
     "material-design-icons": "^3.0.1",
     "ngx-color-picker": "^6.3.3",
     "node-sass": "^4.9.0",
+    "qtip2": "^3.0.3",
     "randomcolor": "^0.5.3",
     "rxjs": "^6.2.1",
     "zone.js": "^0.8.26"

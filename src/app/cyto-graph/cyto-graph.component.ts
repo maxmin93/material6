@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, NgZone } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, NgZone } from '@angular/core';
 
 declare var agens : any;
 
@@ -7,7 +7,7 @@ declare var agens : any;
   templateUrl: './cyto-graph.component.html',
   styleUrls: ['./cyto-graph.component.css']
 })
-export class CytoGraphComponent implements OnInit, AfterViewInit {
+export class CytoGraphComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // cytoscape 객체 
   private graphAgens:any = null;
@@ -37,6 +37,9 @@ export class CytoGraphComponent implements OnInit, AfterViewInit {
         this.divGraph.nativeElement, 'single', true
       );
     }    
+  }
+  ngOnDestroy(){
+    window['angularComponentRef'] = undefined;
   }
 
   ngAfterViewInit(){

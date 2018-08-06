@@ -32,6 +32,7 @@ import { RxjsTutorialsComponent } from './rxjs-tutorials/rxjs-tutorials.componen
 import { CytoStreamComponent } from './cyto-stream/cyto-stream.component';
 
 import { QueryStateComponent } from './ngx-table/components/query-state.component';
+import { CytoTutorialsComponent } from './cyto-tutorials/cyto-tutorials.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,9 @@ import { QueryStateComponent } from './ngx-table/components/query-state.componen
     RxjsTutorialsComponent,
     CytoStreamComponent,
 
-    QueryStateComponent
+    QueryStateComponent,
+
+    CytoTutorialsComponent
   ],
   imports: [
     BrowserModule,

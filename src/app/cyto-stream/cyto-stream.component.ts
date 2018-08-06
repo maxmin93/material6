@@ -72,7 +72,7 @@ export class CytoStreamComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(){
-
+    window['angularComponentRef'] = undefined;
   }
 
   cyCanvasCallback(){

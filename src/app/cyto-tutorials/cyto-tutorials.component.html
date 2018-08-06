@@ -1,0 +1,25 @@
+<h4>cyto-graph tutorials</h4>
+<p>
+  <button mat-raised-button color="primary" (click)="addNodes">Nodes</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="primary" (click)="addEdges()">Edges</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="accent" (click)="toggleParent()">T-Group</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="accent" (click)="cyGrouping()">Group</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="accent" (click)="cyDegrouping()">De-group</button>
+  <span>&nbsp;</span>
+</p>
+<p>
+  <button mat-raised-button color="accent" (click)="clear()">Clear</button>
+  <span>&nbsp;</span>
+</p>
+<div class="wrapped-box">
+  <div #progressBar style='visibility:hidden;'>
+      <mat-progress-bar color="accent" mode="indeterminate">Loading...</mat-progress-bar>
+  </div>            
+
+  <!-- Graph content -->
+  <div class="gra_content" #divGraph></div>
+</div>

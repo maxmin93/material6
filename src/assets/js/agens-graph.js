@@ -216,6 +216,21 @@
           'border-width':'3',
           'border-color':'#5fa9dc'
         }},{
+          selector: ':parent',
+          css: {
+            'z-compound-depth': 'bottom',
+            'background-opacity': 0.333,
+            'border-width':'1',
+            'border-color':'#888',
+            'border-style':'dotted',
+            'padding-top': '10px',
+            'padding-left': '10px',
+            'padding-bottom': '10px',
+            'padding-right': '10px',
+            'text-valign': 'top',
+            'text-halign': 'center',
+            'background-color': '#B8BdB1'
+        }},{
           selector: 'node:selected',                /// 선택한 노드의 변화 (.highlighted로 인해 선택된 노드를 강조하고자 하려면 border값으로 변화를 줘야함)
           css: {
             'background-color': 'white',
@@ -389,14 +404,13 @@
     container: document.getElementById('agens-graph'),
     // style: agens.graph.stylelist['dark'],
     elements: { nodes: [], edges: [] },   // agens.graph.demoData[0],
-    layout: { name: 'euler',
-        fit: true, padding: 30, boundingBox: undefined, 
-        nodeDimensionsIncludeLabels: true, randomize: false,
-        animate: true, animationDuration: 2800, maxSimulationTime: 2800, 
-        ready: function(){}, stop: function(){},
-        // for euler
-        springLength: edge => 120, springCoeff: edge => 0.0008,
-      },
+    layout: { name: 'cose', fit: true, padding: 30, boundingBox: undefined, nodeDimensionsIncludeLabels: true, randomize: true },
+      //   animate: true, animationDuration: 2800, maxSimulationTime: 2800, 
+      //   ready: function(){}, stop: function(){},
+      //   // for euler
+      //   springLength: edge => 120, springCoeff: edge => 0.0008,
+      // },
+      
     // initial viewport state:
     zoom: 1,
     pan: { x: 0, y: 0 },
@@ -445,9 +459,7 @@
   agens.graph.graphFactory = function(target, selectionType, useCxtmenu){
     agens.graph.defaultSetting.container = target;
     agens.graph.defaultSetting.selectionType = selectionType;
-    // selectionType 이 single이면 multiSelection 못하게
-    if( selectionType === 'single' ) agens.graph.defaultSetting.boxSelectionEnabled = false;
-    else agens.graph.defaultSetting.boxSelectionEnabled = true;
+    
     // meta 그래프의 경우 CxtMenu 기능이 필요 없음
     agens.graph.defaultSetting.useCxtmenu = useCxtmenu;
 

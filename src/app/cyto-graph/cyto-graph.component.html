@@ -1,8 +1,8 @@
 <h4>cyto-graph works! <i class="material-icons">accessibility_new</i><mat-icon>home</mat-icon></h4>
 <p>
-  <button mat-raised-button color="primary" (click)="toggleProgress()">T-Progress</button>
+  <button mat-raised-button color="primary" (click)="loadData()">Load Data</button>
   <span>&nbsp;</span>
-  <button mat-raised-button color="primary" (click)="rollback()">Rollback</button>
+  <button mat-raised-button color="primary" (click)="toggleProgressBar()">T-Progress</button>
   <span>&nbsp;</span>
   <button mat-raised-button color="accent" (click)="toggleTitle()">T-Title</button>
   <span>&nbsp;</span>
@@ -30,7 +30,7 @@
   <span>&nbsp;</span>
 </p>
 <div class="wrapped-box">
-  <div #progressBar style='visibility:hidden;'>
+  <div id="progressBar" #progressBar style='visibility:hidden;'>
       <mat-progress-bar color="accent" mode="indeterminate">Loading...</mat-progress-bar>
   </div>            
 

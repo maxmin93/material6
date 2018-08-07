@@ -1,5 +1,20 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, NgZone } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 
+import { Observable, Subscription } from 'rxjs';
+import { concatAll, filter, share } from 'rxjs/operators';
+
+import { IResultDto, IResponseDto, IGraphDto } from '../models/agens-response-types';
+import { IGraph, ILabel, IElement, INode, IEdge, IStyle, IRecord, IColumn, IRow, IEnd } from '../models/agens-data-types';
+import { Label, Element, Node, Edge } from '../models/agens-graph-types';
+import { IProject } from '../models/agens-manager-types';
+
+import { AgensUtilService } from '../services/agens-util.service';
+
+import * as CONFIG from '../global.config';
+
+declare var $     : any;
+declare var _     : any;
 declare var agens : any;
 
 @Component({
@@ -9,41 +24,172 @@ declare var agens : any;
 })
 export class CytoGraphComponent implements OnInit, AfterViewInit, OnDestroy {
 
+  isInitDone: boolean = false;
+
   // cytoscape 객체 
-  private graphAgens:any = null;
+  private cy:any = null;
   private showNodeTitle:boolean = false;
 
+  // pallets : Node 와 Edge 라벨별 color 셋
+  colorIndex: number = 0;
+  labelColors: any[] = [];
+  
+  // core/query API 결과
+  private resultDto: IResultDto = undefined;
+  private resultGraph: IGraph = undefined;
+  private resultRecord: IRecord = undefined;
+  private resultMeta: IGraph = undefined;
+  private handlers: Array<Subscription> = [
+    undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined
+  ];
+
   @ViewChild('progressBar') progressBar: ElementRef;
-  @ViewChild('divGraph') divGraph: ElementRef;
+  @ViewChild('divGraph') divCanvas: ElementRef;
 
   constructor(
     private _ngZone: NgZone,    
+    private _http: HttpClient,
+    private _util: AgensUtilService
   ) { 
+  }
+
+  ngOnInit() {
     // prepare to call this.function from external javascript
     window['angularComponentRef'] = {
       zone: this._ngZone,
       cyCanvasCallback: () => this.cyCanvasCallback(),
       cyElemCallback: (target) => this.cyElemCallback(target),
-      cyNodeCallback: (target) => this.cyNodeCallback(target),
       cyQtipMenuCallback: (target, value) => this.cyQtipMenuCallback(target, value),
       component: this
     };    
   }
-
-  ngOnInit() {
-    // Cytoscape 생성
-    if( this.graphAgens === null ) {
-      this.graphAgens = agens.graph.graphFactory(
-        this.divGraph.nativeElement, 'single', true
-      );
-    }    
-  }
   ngOnDestroy(){
     window['angularComponentRef'] = undefined;
   }
-
   ngAfterViewInit(){
-    agens.graph.loadData( GRAPH_DATA );
+    // Cytoscape 생성 & 초기화
+    this.cy = agens.graph.graphFactory(
+      this.divCanvas.nativeElement, {
+        selectionType: 'single',    // 'single' or 'multiple'
+        boxSelectionEnabled: false, // if single then false, else true
+        qtipCxtmenu: true,          // whether to use Context menu or not
+        hideNodeTitle: true,       // hide nodes' title
+        hideEdgeTitle: true,       // hide edges' title
+      }
+    );
+    // Cytoscape 바탕화면 qTip menu
+    this.cy.qtip({
+      content: function(e){ 
+        let html:string = `<div class="hide-me"><h4><strong>Menu</strong></h4><hr/><ul>`;
+        html += `<li><a href="javascript:void(0)" onclick="agens.cy.$api.cyQtipMenuCallback('core','addNode')">create new NODE</a></li>`;
+        html += `</ul></div>`;
+        return html;
+      },
+      show: { event: 'cxttap', cyBgOnly: true },    // cxttap: mouse right button click event
+      hide: { event: 'click unfocus' },
+      position: { target: 'mouse', adjust: { mouse: false } },
+      style: { classes: 'qtip-bootstrap', tip: { width: 16, height: 8 } },
+      events: { visible: function(event, api) { $('.qtip').click(function(){ $('.qtip').hide(); }); } }
+    });
+
+    // pallets 생성 : luminosity='dark'
+    this.labelColors = this._util.randomColorGenerator('dark', CONFIG.MAX_COLOR_SIZE);
+
+    // if( !this.isInitDone ){
+    //   this.isInitDone = true;
+    //   this.loadData();
+    // } 
+  }
+
+  getHttpData(): Observable<any>{
+    const url = `/assets/data/northwind_result_01.json`;
+    return this._http.get<any>(url)
+        .pipe( concatAll(), filter(x => x.hasOwnProperty('group')), share() );
+  }
+  clearSubscriptions(){
+    this.handlers.forEach(x => {
+      if( x ) x.unsubscribe();
+      x = undefined;
+    });
+  }
+
+  loadData(){
+    // call API
+    let data$:Observable<any> = this.getHttpData();
+
+    this.handlers[0] = data$.pipe( filter(x => x['group'] == 'result') ).subscribe(
+      (x:IResultDto) => {
+        this.resultDto = <IResultDto>x;
+      },
+      err => {
+        console.log( 'core.query: ERROR=', err instanceof HttpErrorResponse, err.error );       
+        this.clearSubscriptions();
+      });
+
+    this.handlers[1] = data$.pipe( filter(x => x['group'] == 'graph') ).subscribe(
+      (x:IGraph) => {
+        this.resultGraph = x;
+        this.resultGraph.labels = new Array<ILabel>();
+        this.resultGraph.nodes = new Array<INode>();
+        this.resultGraph.edges = new Array<IEdge>();
+      });
+    this.handlers[2] = data$.pipe( filter(x => x['group'] == 'labels') ).subscribe(
+      (x:ILabel) => { x.scratch['_style'] = <IStyle>{ width: undefined, title: 'name'
+                , color: this.labelColors[ (++this.colorIndex)%CONFIG.MAX_COLOR_SIZE ] };      
+        this.resultGraph.labels.push( x );
+      });
+    this.handlers[3] = data$.pipe( filter(x => x['group'] == 'nodes') ).subscribe(
+      (x:INode) => {
+        // setNeighbors from this.resultGraph.labels;
+        x.scratch['_neighbors'] = new Array<string>();
+        this.resultGraph.labels
+          .filter(val => val.type == 'nodes' && val.name == x.data.label)
+          .map(label => {
+            x.scratch['_neighbors'] += label.targets;
+            x.scratch['_style'] = label.scratch['_style'];
+            x.scratch['_styleBak'] = _.clone(label.scratch['_style']);
+          });
+
+        this.resultGraph.nodes.push( x );
+        this.cy.add( x );
+      });
+    this.handlers[4] = data$.pipe( filter(x => x['group'] == 'edges') ).subscribe(
+      (x:IEdge) => {
+        this.resultGraph.labels
+        .filter(val => val.type == 'edges' && val.name == x.data.label)
+        .map(label => {
+          x.scratch['_style'] = label.scratch['_style'];
+          x.scratch['_styleBak'] = _.clone(label.scratch['_style']);
+        });
+
+        this.resultGraph.edges.push( x );
+        this.cy.add( x );
+      });
+    this.handlers[5] = data$.pipe( filter(x => x['group'] == 'record') ).subscribe(
+      (x:IRecord) => {
+        this.resultRecord = x;
+        this.resultRecord.columns = new Array<IColumn>();
+        this.resultRecord.rows = new Array<IRow>();
+      });
+    this.handlers[6] = data$.pipe( filter(x => x['group'] == 'columns') ).subscribe(
+      (x:IColumn) => {
+        this.resultRecord.columns.push( x );
+      });
+    this.handlers[7] = data$.pipe( filter(x => x['group'] == 'rows') ).subscribe(
+      (x:IRow) => {
+        this.resultRecord.rows.push( x );
+      });
+    this.handlers[8] = data$.pipe( filter(x => x['group'] == 'end') ).subscribe(
+      (x:IEnd) => {
+        this.cy.style(agens.graph.stylelist['dark']).update();
+        console.log('loadData completed!');
+        this.changeLayout('euler');
+        // this.cy.$api.changeLayout('euler', {
+        //   "ready": () => this.toggleProgressBar(true)
+        //   ,"stop": () => this.toggleProgressBar(false)
+        // });
+      });
+
   }
 
   cyCanvasCallback(){
@@ -138,20 +284,27 @@ export class CytoGraphComponent implements OnInit, AfterViewInit, OnDestroy {
 
   //////////////////////////////////////////////////////////
 
-  toggleProgress(option:string=undefined){
-    if( option === undefined ){
-      this.progressBar.nativeElement.style.visibility = 
-        (this.progressBar.nativeElement.style.visibility == 'visible') ? 'hidden' : 'visible';
-    }
-    else{
-      this.progressBar.nativeElement.style.visibility = option;
-    }
-  }
-  toggleTitle(option:boolean=undefined){
-    agens.graph.defaultSetting.hideNodeTitle = (option === undefined) ? 
-        !agens.graph.defaultSetting.hideNodeTitle : option;
+  // for banana javascript, have to use 'document.querySelector(...)'
+  toggleProgressBar(option:boolean = undefined){
+    let graphProgressBar:any = document.querySelector('div#progressBar');
+    if( !graphProgressBar ) return;
 
-    agens.cy.style(agens.graph.stylelist['dark']).update();
+    if( option === undefined ) option = !((graphProgressBar.style.visibility == 'visible') ? true : false);
+    // toggle progressBar's visibility
+    if( option ){
+      graphProgressBar.style.visibility = 'visible';
+    } 
+    else{
+      graphProgressBar.style.visibility = 'hidden';
+    } 
+    console.log( 'toggleProgressBar =', option);
+  } 
+
+  toggleTitle(option:boolean=undefined){
+    option = (!option) ? !this.cy.scratch('_config').hideNodeTitle : option;
+    this.cy.scratch('_config').hideNodeTitle = option; 
+
+    this.cy.style(agens.graph.stylelist['dark']).update();
   }
 
   //////////////////////////////////////////////////////////
@@ -204,27 +357,27 @@ export class CytoGraphComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   changeLayout(layout:string='euler'){
     // 선택된 elements 들이 있으면 그것들을 대상으로 실행, 없으면 전체
-    let elements = this.graphAgens.elements(':selected');
-    if( elements.length <= 1) elements = this.graphAgens.elements(':visible');
+    let elements = this.cy.elements(':selected');
+    if( elements.length <= 1) elements = this.cy.elements(':visible');
 
     let layoutOption = {
       name: layout,
-      fit: true, padding: 30, boundingBox: undefined, 
+      fit: true, padding: 50, boundingBox: undefined, 
       nodeDimensionsIncludeLabels: true, randomize: true,
       animate: true, animationDuration: 2800, maxSimulationTime: 2800, 
-      ready: function(){}, stop: function(){},
+      ready: () => this.toggleProgressBar(true), stop: () => this.toggleProgressBar(false),
       // for euler
       springLength: edge => 120, springCoeff: edge => 0.0008,
     };
 
     // adjust layout
     let layoutHandler = elements.layout(layoutOption);
-    layoutHandler.on('layoutstart', function(){
-      // 최대 3초(3000ms) 안에는 멈추도록 설정
-      setTimeout(function(){
-        layoutHandler.stop();
-      }, 3000);
-    });
+    // layoutHandler.on('layoutstart', function(){
+    //   // 최대 3초(3000ms) 안에는 멈추도록 설정
+    //   setTimeout(function(){
+    //     layoutHandler.stop();
+    //   }, 3000);
+    // });
     layoutHandler.run();
   }
 }

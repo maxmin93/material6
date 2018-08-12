@@ -4,16 +4,45 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
-import { CdkTableModule } from '@angular/cdk/table';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {CdkTableModule} from '@angular/cdk/table';
+import {CdkTreeModule} from '@angular/cdk/tree';
 import {
-  MatAutocompleteModule, MatBadgeModule, MatBottomSheetModule, MatButtonModule, MatButtonToggleModule,
-  MatCardModule, MatCheckboxModule, MatChipsModule, MatDatepickerModule, MatDialogModule,
-  MatDividerModule, MatExpansionModule, MatGridListModule, MatIconModule, MatInputModule,
-  MatListModule, MatMenuModule, MatNativeDateModule, MatPaginatorModule, MatProgressBarModule,
-  MatProgressSpinnerModule, MatRadioModule, MatRippleModule, MatSelectModule, MatSidenavModule,
-  MatSliderModule, MatSlideToggleModule, MatSnackBarModule, MatSortModule, MatStepperModule,
-  MatTableModule, MatTabsModule, MatToolbarModule, MatTooltipModule, MatTreeModule, 
-  MatFormFieldModule
+  MatAutocompleteModule,
+  MatBadgeModule,
+  MatBottomSheetModule,
+  MatButtonModule,
+  MatButtonToggleModule,
+  MatCardModule,
+  MatCheckboxModule,
+  MatChipsModule,
+  MatDatepickerModule,
+  MatDialogModule,
+  MatDividerModule,
+  MatExpansionModule,
+  MatGridListModule,
+  MatIconModule,
+  MatInputModule,
+  MatListModule,
+  MatMenuModule,
+  MatNativeDateModule,
+  MatPaginatorModule,
+  MatProgressBarModule,
+  MatProgressSpinnerModule,
+  MatRadioModule,
+  MatRippleModule,
+  MatSelectModule,
+  MatSidenavModule,
+  MatSliderModule,
+  MatSlideToggleModule,
+  MatSnackBarModule,
+  MatSortModule,
+  MatStepperModule,
+  MatTableModule,
+  MatTabsModule,
+  MatToolbarModule,
+  MatTooltipModule,
+  MatTreeModule,
 } from '@angular/material';
 
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
@@ -36,6 +65,7 @@ import { CytoTutorialsComponent } from './cyto-tutorials/cyto-tutorials.componen
 import { D3TutorialComponent } from './d3-tutorial/d3-tutorial.component';
 import { D3GraphComponent } from './d3-graph/d3-graph.component';
 import { D3ChartComponent } from './d3-chart/d3-chart.component';
+import { D3MetaSheetComponent } from './d3-meta-sheet/d3-meta-sheet.component';
 
 @NgModule({
   declarations: [
@@ -48,40 +78,71 @@ import { D3ChartComponent } from './d3-chart/d3-chart.component';
     CytoStreamComponent,
 
     QueryStateComponent,
-
     CytoTutorialsComponent,
-
     D3TutorialComponent,
-
     D3GraphComponent,
-
-    D3ChartComponent
+    D3ChartComponent,
+    D3MetaSheetComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    FormsModule,
+    HttpClientModule,
+    MatNativeDateModule,
+    ReactiveFormsModule,
 
-    MatFormFieldModule, MatInputModule, MatIconModule, MatProgressBarModule,
-    MatButtonModule,
+    MatInputModule, MatListModule, MatIconModule, MatProgressBarModule, MatButtonModule,
     CdkTableModule, MatTableModule, MatPaginatorModule, MatSortModule,
-    
+    MatBottomSheetModule, 
+
     NgxDatatableModule,
 
     AppRoutingModule
   ],
   exports: [
     CdkTableModule,
-    MatAutocompleteModule, MatBadgeModule, MatBottomSheetModule, MatButtonModule, MatButtonToggleModule,
-    MatCardModule, MatCheckboxModule, MatChipsModule, MatStepperModule, MatDatepickerModule,
-    MatDialogModule, MatDividerModule, MatExpansionModule, MatGridListModule, MatIconModule,
-    MatInputModule, MatListModule, MatMenuModule, MatNativeDateModule, MatPaginatorModule,
-    MatProgressBarModule, MatProgressSpinnerModule, MatRadioModule, MatRippleModule, MatSelectModule,
-    MatSidenavModule, MatSliderModule, MatSlideToggleModule, MatSnackBarModule, MatSortModule,
-    MatTableModule, MatTabsModule, MatToolbarModule, MatTooltipModule, MatTreeModule, 
-    MatFormFieldModule
+    CdkTreeModule,
+    MatAutocompleteModule,
+    MatBadgeModule,
+    MatBottomSheetModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatCardModule,
+    MatCheckboxModule,
+    MatChipsModule,
+    MatStepperModule,
+    MatDatepickerModule,
+    MatDialogModule,
+    MatDividerModule,
+    MatExpansionModule,
+    MatGridListModule,
+    MatIconModule,
+    MatInputModule,
+    MatListModule,
+    MatMenuModule,
+    MatNativeDateModule,
+    MatPaginatorModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
+    MatRadioModule,
+    MatRippleModule,
+    MatSelectModule,
+    MatSidenavModule,
+    MatSliderModule,
+    MatSlideToggleModule,
+    MatSnackBarModule,
+    MatSortModule,
+    MatTableModule,
+    MatTabsModule,
+    MatToolbarModule,
+    MatTooltipModule,
+    MatTreeModule,
   ],
-  providers: [  ],
+  providers: [ ],
+  // additional providers needed for this module
+  entryComponents: [ D3MetaSheetComponent ],
   bootstrap: [ AppComponent ]
 })
 export class AppModule { }

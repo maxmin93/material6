@@ -21,3 +21,7 @@ body {
   font-family: 'Nanum Gothic', sans-serif;
   font-size: 18px;
 }
+
+.custom-width {
+  width: 1200px;
+}

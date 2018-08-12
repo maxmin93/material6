@@ -1,0 +1,16 @@
+.links line {
+  stroke: #393939;
+  stroke-opacity: 0.8;
+}
+
+.nodes circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+label {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  position: absolute;
+  left: 10px;
+  top: 140px;
+}

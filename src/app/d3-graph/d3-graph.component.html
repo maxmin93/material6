@@ -5,5 +5,15 @@
 </p>
 <svg width="960" height="600"></svg>
 <label>
-  <input style="width:240px;" type="range" min="0" max="1" step="any" value="0.5"> Link Strength
+  <!-- <input style="width:240px;" type="range" min="0" max="1" step="any" value="0.5"> Link Strength -->
+  <mat-slider style="width:300px;" 
+        [disabled]="false"
+        [max]="0"
+        [min]="100"
+        [step]="1"
+        [(ngModel)]="value"
+        (change)="changeStrength($event)"
+  >
+  Link Strength </mat-slider>
+
 </label>

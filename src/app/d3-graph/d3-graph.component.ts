@@ -4,7 +4,9 @@ import {MatBottomSheet, MatBottomSheetRef} from '@angular/material';
 
 import { D3MetaSheetComponent } from '../d3-meta-sheet/d3-meta-sheet.component';
 
-declare var d3 : any;
+import * as d3 from 'd3';
+
+// declare var d3 : any;
 
 @Component({
   selector: 'app-d3-graph',
@@ -14,13 +16,18 @@ declare var d3 : any;
 export class D3GraphComponent implements AfterViewInit {
 
   simulation: any;
-  strengthValue: number = 0.9;
+  value: number = 9;
+  strengthValue: number = 0.09;
 
   constructor(private bottomSheet: MatBottomSheet) {}
 
   ngAfterViewInit() {
     // setTimeout(() => this.drawGraph(), 0);
 
+  }
+
+  changeStrength(val:any){
+    console.log('changeStrength:', val);
   }
 
   drawGraph(){
@@ -30,7 +37,7 @@ export class D3GraphComponent implements AfterViewInit {
 
     var simulation = d3.forceSimulation()
           .force("link", d3.forceLink()
-              .id(function(d) { return d.id; })
+              .id(function(d) { return d['id']; })
               .strength(this.strengthValue)
           )
           .force("charge", d3.forceManyBody())
@@ -39,12 +46,13 @@ export class D3GraphComponent implements AfterViewInit {
 
     console.log( 'simulation', this.simulation);
     d3.select("input[type=range]")
-    .datum({ "strength": this.strengthValue, "fn": this.simulation })
-    .on("input", function(e){
-      console.log( 'inputted: value=', this.value, e );
-      e.strength = this.value;
-      e.fn.force("link").strength(+this.value);
-      e.fn.alpha(1).restart();
+    // .datum({ "strength": this.strengthValue, "fn": this.simulation })
+    .on("input", (e) => {
+      console.log( 'inputted: value=', e );
+      console.log('datum:', this.strengthValue, this.simulation );
+      // e.strength = value;
+      // e.fn.force("link").strength(+value);
+      // e.fn.alpha(1).restart();
     });
     
     var link = svg.append("g")
@@ -65,8 +73,11 @@ export class D3GraphComponent implements AfterViewInit {
           .data(GDATA.nodes)
           .enter().append("circle")
           .attr("r", 15)
-          .attr("fill", function(d) { return color(d.group); })
-          .call(d3.drag()
+          .attr("fill", function(d) { 
+            // console.log( (<Function>color)( String(d['group']) ), d );
+            return (<Function>color)( String(d['group']) );
+           })
+          .call( (<any>d3).drag()
             .on("start", dragstarted)
             .on("drag", dragged)
             .on("end", dragended));
@@ -78,19 +89,19 @@ export class D3GraphComponent implements AfterViewInit {
         .nodes(GDATA.nodes)
         .on("tick", ticked);
 
-    simulation.force("link")
+    (<any>simulation.force("link"))
         .links(GDATA.links);
 
     function ticked() {
       link
-          .attr("x1", function(d) { return d.source.x; })
-          .attr("y1", function(d) { return d.source.y; })
-          .attr("x2", function(d) { return d.target.x; })
-          .attr("y2", function(d) { return d.target.y; });
+          .attr("x1", function(d) { return d.source['x']; })
+          .attr("y1", function(d) { return d.source['y']; })
+          .attr("x2", function(d) { return d.target['x']; })
+          .attr("y2", function(d) { return d.target['y']; });
 
       node
-          .attr("cx", function(d) { return d.x; })
-          .attr("cy", function(d) { return d.y; });
+          .attr("cx", function(d) { return d['x']; })
+          .attr("cy", function(d) { return d['y']; });
     }
 
     function dragstarted(d) {

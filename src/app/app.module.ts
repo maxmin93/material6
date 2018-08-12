@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { NgModule, Injectable } from '@angular/core';
+import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
@@ -7,7 +7,8 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {CdkTableModule} from '@angular/cdk/table';
 import {CdkTreeModule} from '@angular/cdk/tree';
-import {
+
+import { GestureConfig,
   MatAutocompleteModule,
   MatBadgeModule,
   MatBottomSheetModule,
@@ -67,6 +68,14 @@ import { D3GraphComponent } from './d3-graph/d3-graph.component';
 import { D3ChartComponent } from './d3-chart/d3-chart.component';
 import { D3MetaSheetComponent } from './d3-meta-sheet/d3-meta-sheet.component';
 
+declare var Hammer: any;
+@Injectable()
+export class HammerConfig extends GestureConfig  {
+  buildHammer(element: HTMLElement) {
+    return new GestureConfig({touchAction: 'pan-y'}).buildHammer(element);
+  }
+}
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -85,8 +94,9 @@ import { D3MetaSheetComponent } from './d3-meta-sheet/d3-meta-sheet.component';
     D3MetaSheetComponent
   ],
   imports: [
-    BrowserModule,
     BrowserAnimationsModule,
+    BrowserModule,
+    
     HttpClientModule,
     FormsModule,
     HttpClientModule,
@@ -95,7 +105,7 @@ import { D3MetaSheetComponent } from './d3-meta-sheet/d3-meta-sheet.component';
 
     MatInputModule, MatListModule, MatIconModule, MatProgressBarModule, MatButtonModule,
     CdkTableModule, MatTableModule, MatPaginatorModule, MatSortModule,
-    MatBottomSheetModule, 
+    MatBottomSheetModule, MatSliderModule,
 
     NgxDatatableModule,
 
@@ -140,7 +150,12 @@ import { D3MetaSheetComponent } from './d3-meta-sheet/d3-meta-sheet.component';
     MatTooltipModule,
     MatTreeModule,
   ],
-  providers: [ ],
+  providers: [ 
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: HammerConfig
+    }    
+  ],
   // additional providers needed for this module
   entryComponents: [ D3MetaSheetComponent ],
   bootstrap: [ AppComponent ]

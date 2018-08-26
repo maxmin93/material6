@@ -1,4 +1,4 @@
-import { StateType, RequestType } from '../global.config';
+import { StateType, RequestType } from '../app.config';
 import { IDatasource, IGraph, ILabel, IRecord } from './agens-data-types';
 
 export interface IResponseDto {

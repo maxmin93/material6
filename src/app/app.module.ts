@@ -68,6 +68,14 @@ import { D3GraphComponent } from './d3-graph/d3-graph.component';
 import { D3ChartComponent } from './d3-chart/d3-chart.component';
 import { D3MetaSheetComponent } from './d3-meta-sheet/d3-meta-sheet.component';
 
+import { D3Graph01Component } from './d3-graph01/d3-graph01.component';
+import { D3graphComponent } from './d3-graph01/components/d3graph/d3graph.component';
+import { D3nodeComponent } from './d3-graph01/components/d3node/d3node.component';
+import { D3edgeComponent } from './d3-graph01/components/d3edge/d3edge.component';
+import { D3GraphService } from './d3-graph01/services/d3-graph-service';
+import { DraggableDirective } from './d3-graph01/directives/draggable.directive';
+import { ZoomableDirective } from './d3-graph01/directives/zoomable.directive';
+
 declare var Hammer: any;
 @Injectable()
 export class HammerConfig extends GestureConfig  {
@@ -91,7 +99,14 @@ export class HammerConfig extends GestureConfig  {
     D3TutorialComponent,
     D3GraphComponent,
     D3ChartComponent,
-    D3MetaSheetComponent
+    D3MetaSheetComponent,
+
+    D3Graph01Component,
+    D3graphComponent,
+    D3nodeComponent,
+    D3edgeComponent,
+    DraggableDirective,
+    ZoomableDirective
   ],
   imports: [
     BrowserAnimationsModule,
@@ -151,6 +166,7 @@ export class HammerConfig extends GestureConfig  {
     MatTreeModule,
   ],
   providers: [ 
+    D3GraphService,
     {
       provide: HAMMER_GESTURE_CONFIG,
       useClass: HammerConfig

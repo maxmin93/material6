@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, ViewChild, ElementRef, OnDestroy, Output, EventEmitter } from '@angular/core';
 
-import { Observable, timer, Subscription } from 'node_modules/rxjs';
+import { Observable, timer, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-query-state',

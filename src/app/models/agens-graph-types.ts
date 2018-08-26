@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 
 import { IGraph, ILabel, IElement, INode, IEdge, IProperty, IStyle } from './agens-data-types';
-import { all } from '../../../node_modules/@types/q';
 
 export class Label implements ILabel {
   readonly group: string = 'labels';      // group == 'labels'

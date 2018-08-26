@@ -1,4 +1,4 @@
-import { StateType } from '../global.config';
+import { StateType } from '../app.config';
 
 export interface ILogs {
 

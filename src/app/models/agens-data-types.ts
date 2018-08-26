@@ -1,4 +1,4 @@
-import { ValueType } from '../global.config';
+import { ValueType } from '../app.config';
 
 export interface IDatasource {
   group: string;        // group == 'datasource'

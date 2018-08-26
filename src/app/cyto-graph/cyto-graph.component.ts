@@ -11,7 +11,7 @@ import { IProject } from '../models/agens-manager-types';
 
 import { AgensUtilService } from '../services/agens-util.service';
 
-import * as CONFIG from '../global.config';
+import * as CONFIG from '../app.config';
 
 declare var $     : any;
 declare var _     : any;

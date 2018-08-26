@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import * as CONFIG from '../global.config';
+import * as CONFIG from '../app.config';
 
 declare var randomColor: any;
 

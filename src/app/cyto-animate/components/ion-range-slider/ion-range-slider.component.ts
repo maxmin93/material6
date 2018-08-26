@@ -1,5 +1,6 @@
 import {ElementRef, OnChanges, SimpleChanges, Input, EventEmitter, Output, Component} from "@angular/core";
 
+import 'moment';
 import 'ion-rangeslider'
 import * as jQuery from "jquery";
 

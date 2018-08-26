@@ -38,6 +38,7 @@
               "node_modules/d3/build/d3.min.js",
               "node_modules/randomcolor/randomColor.js",
               "node_modules/ion-rangeslider/js/ion.rangeSlider.min.js",
+              "node_modules/moment/min/moment.min.js",
 
               "node_modules/cytoscape/dist/cytoscape.min.js",
               "node_modules/cytoscape-cxtmenu/cytoscape-cxtmenu.js",

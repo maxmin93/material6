@@ -293,7 +293,7 @@
   agens.graph.defaultSetting = {
     elements: { nodes: [], edges: [] },
     style: undefined,       // agens.graph.stylelist['dark'],
-    layout: { name: 'cose',
+    layout: { name: 'preset',
         fit: true, padding: 100, boundingBox: undefined, 
         nodeDimensionsIncludeLabels: true, randomize: false,
         animate: 'end', refresh: 30, animationDuration: 800, maxSimulationTime: 2800,

@@ -1,0 +1,54 @@
+<h4>cyto-animate works! <i class="material-icons">accessibility_new</i><mat-icon>home</mat-icon></h4>
+<p>
+  <button mat-raised-button color="primary" (click)="runLayout()">runLayout</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="primary" (click)="sampleAni()">sampleAni</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="accent" (click)="toggleTitle()">T-Title</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="warn" (click)="runMarkov()">R-Markov</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="accent" (click)="centralrityPR()">C-PR</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="accent" (click)="centralrityDg()">C-Dg</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="accent" (click)="centralrityCn()">C-Cn</button>
+  <span>&nbsp;</span>
+  <button mat-raised-button color="accent" (click)="centralrityBt()">C-Bt</button>
+  <span>&nbsp;</span>
+</p>
+<div class="wrapped-box">
+  <div id="progressBar" #progressBar style='visibility:hidden;'>
+      <mat-progress-bar color="accent" mode="indeterminate">Loading...</mat-progress-bar>
+  </div>            
+  
+  <div>
+    <p>
+      Simple Slider ({{simpleSlider.onUpdate?.from}} - {{simpleSlider.onUpdate?.to}})
+      <button (click)="setAdvancedSliderTo(20,80)">Update Slider to 20 - 80</button>
+    </p>
+    <ion-range-slider #simpleSliderElement type="double"
+        [min]="min"
+        [max]="max"
+        from="28"
+        from_min="10"
+        from_max="30"
+        from_shadow="true"
+        to="40"
+        to_min="40"
+        to_max="90"
+        to_shadow="true"
+        grid="true"
+        grid_num="10"
+        prefix="Weight: "
+        postfix=" million pounds"
+        decorate_both="false"
+        (onUpdate)="updateSlider(simpleSlider, $event)"
+        (onChange)="updateSlider(simpleSlider, $event)"
+        (onFinish)="finishSlider(simpleSlider, $event)"></ion-range-slider>
+  </div>
+
+  <!-- Graph content -->
+  <div class="gra_content" #divGraph></div>
+</div>
+  

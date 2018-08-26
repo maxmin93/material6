@@ -14,6 +14,7 @@ import { D3GraphComponent } from './d3-graph/d3-graph.component';
 import { D3ChartComponent } from './d3-chart/d3-chart.component';
 
 import { D3Graph01Component } from './d3-graph01/d3-graph01.component';
+import { CytoAnimateComponent } from './cyto-animate/cyto-animate.component';
 
 const routes: Routes = [
   { path: 'mat-table', component: MatTableComponent },
@@ -23,6 +24,7 @@ const routes: Routes = [
   { path: 'socket', component: WebsocketComponent },
   { path: 'rxjs', component: RxjsTutorialsComponent },
   { path: 'stream', component: CytoStreamComponent },
+  { path: 'cy-animate', component: CytoAnimateComponent },
 
   { path: 'd3-tutorial', component: D3TutorialComponent },
   { path: 'd3-graph', component: D3GraphComponent },

@@ -195,7 +195,7 @@ export class CytoGraphComponent implements OnInit, AfterViewInit, OnDestroy {
   cyCanvasCallback(){
   }
   cyElemCallback(target){
-    console.log( 'cyElemCallback:', `[${target.id()}]`, target.data('name') );
+    console.log( 'cyElemCallback:', `[${target.id()}]`, target._private );
   }
   cyNodeCallback(target){
   }

@@ -75,6 +75,8 @@ import { D3edgeComponent } from './d3-graph01/components/d3edge/d3edge.component
 import { D3GraphService } from './d3-graph01/services/d3-graph-service';
 import { DraggableDirective } from './d3-graph01/directives/draggable.directive';
 import { ZoomableDirective } from './d3-graph01/directives/zoomable.directive';
+import { CytoAnimateComponent } from './cyto-animate/cyto-animate.component';
+import { IonRangeSliderComponent } from './cyto-animate/components/ion-range-slider/ion-range-slider.component';
 
 declare var Hammer: any;
 @Injectable()
@@ -106,7 +108,9 @@ export class HammerConfig extends GestureConfig  {
     D3nodeComponent,
     D3edgeComponent,
     DraggableDirective,
-    ZoomableDirective
+    ZoomableDirective,
+    CytoAnimateComponent,
+    IonRangeSliderComponent
   ],
   imports: [
     BrowserAnimationsModule,

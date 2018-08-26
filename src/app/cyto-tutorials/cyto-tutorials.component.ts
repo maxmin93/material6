@@ -48,13 +48,21 @@ export class CytoTutorialsComponent implements AfterViewInit, OnDestroy {
       this.cy.fit( this.cy.elements(), 100);
       // refresh style
       this.cy.style(agens.graph.stylelist['dark']).update();
+
+      this.cy.elements(`[label='bfs']`).layout({
+        name: 'breadthfirst',
+        directed: true,
+        roots: '#a',
+        padding: 10 
+      }).run();
+
     }, 30);
   }
 
   cyCanvasCallback(){
   }
   cyElemCallback(target){
-    console.log( 'cyElemCallback:', `[${target.id()}]`, target.data('name') );
+    console.log( 'cyElemCallback:', `[${target.id()}]`, target._private.position );
   }
   cyNodeCallback(target){
   }
@@ -175,6 +183,12 @@ const GRAPH_DATA = {
       ,{ "group": "nodes", "data": { "id": "n3" }, "position": { "x": 218.4787200381016, "y": 397.0689640913272 } }
       ,{ "group": "nodes", "data": { "id": "n4" }, "position": { "x": -20.468826662938394, "y": 352.94586364352034 } }
       ,{ "group": "nodes", "data": { "id": "n5" }, "position": { "x": 38.2395571029856, "y": 285.0461346952574 } }
+
+      , { "group": "nodes", "data": { id: 'a', label: 'bfs' } },
+      { "group": "nodes", "data": { id: 'b', label: 'bfs' } },
+      { "group": "nodes", "data": { id: 'c', label: 'bfs' } },
+      { "group": "nodes", "data": { id: 'd', label: 'bfs' } },
+      { "group": "nodes", "data": { id: 'e', label: 'bfs' } }
     ],
     "edges":[
       { "group": "edges", "data": { "id": "e0", "source": "n0", "target": "n1"  },  "position": {} }
@@ -182,6 +196,14 @@ const GRAPH_DATA = {
       ,{ "group": "edges", "data": { "id": "e2", "source": "n4", "target": "n5"  },  "position": {} }
       ,{ "group": "edges", "data": { "id": "e3", "source": "n0", "target": "n3"  },  "position": {} }
       ,{ "group": "edges", "data": { "id": "e4", "source": "n2", "target": "n3"  },  "position": {} }
+
+      , { "group": "edges", "data": { id: 'a"e', label: 'bfs', weight: 1, source: 'a', target: 'e' } },
+      { "group": "edges", "data": { id: 'ab', label: 'bfs', weight: 3, source: 'a', target: 'b' } },
+      { "group": "edges", "data": { id: 'be', label: 'bfs', weight: 4, source: 'b', target: 'e' } },
+      { "group": "edges", "data": { id: 'bc', label: 'bfs', weight: 5, source: 'b', target: 'c' } },
+      { "group": "edges", "data": { id: 'ce', label: 'bfs', weight: 6, source: 'c', target: 'e' } },
+      { "group": "edges", "data": { id: 'cd', label: 'bfs', weight: 2, source: 'c', target: 'd' } },
+      { "group": "edges", "data": { id: 'de', label: 'bfs', weight: 7, source: 'd', target: 'e' } }
     ]
   }
 };

@@ -26,6 +26,7 @@ export class CytoAnimateComponent implements OnInit, AfterViewInit {
 
   min: number = 0;
   max: number = 100;
+  mdata: any[] = [];
 
   simpleSlider = {name: "Simple Slider", onUpdate: undefined, onFinish: undefined};
 
@@ -91,20 +92,22 @@ export class CytoAnimateComponent implements OnInit, AfterViewInit {
       this.cy.style(agens.graph.stylelist['dark']).update();
     }, 100);
 
-    $("#example_id").ionRangeSlider();
-
+    // Promise 안씌우면 초기화 오류 발생
+    Promise.resolve(null).then(() => {
+      this.mdata = this.cy.nodes().map((ele) => {
+        return ele.data('prop').hasOwnProperty('date') ? ele.data('prop')['date'] : null;
+      }).filter(x => !!x);
+    });
   }
 
-  updateSlider(slider, event) {
-    console.log("Slider updated: " + slider.name);
-    slider.onUpdate = event;
+  onChangeSlider(event) {
+    console.log("Slider changed:", event);
   }
-  finishSlider(slider, event) {
-    console.log("Slider finished: " + slider.name);
-    slider.onFinish = event;
+  onUpdateSlider(event) {
+    console.log("Slider updated:", event);
   }
-  setAdvancedSliderTo(from, to) {
-    this.simpleSliderElement.update({from: from, to:to});
+  setSliderValue( value ) {
+    this.simpleSliderElement.update( value );
   }
 
   runLayout(){

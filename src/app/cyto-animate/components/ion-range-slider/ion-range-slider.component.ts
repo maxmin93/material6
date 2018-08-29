@@ -57,6 +57,10 @@ export class IonRangeSliderComponent implements OnChanges {
     @Input() private grid: boolean = true;
     @Input() private disable: any = false;
 
+    @Input('interval') private intervalSec:number = 3000;
+    private intervalId:any = undefined;
+    private intervalCount:number = 0;
+
     // @Output() onStart: EventEmitter<any> = new EventEmitter<any>();
     @Output() onChange: EventEmitter<any> = new EventEmitter<any>();
     @Output() onFinish: EventEmitter<any> = new EventEmitter<any>();
@@ -133,5 +137,31 @@ export class IonRangeSliderComponent implements OnChanges {
             }
         });
         this.initialized = true;
+    }
+
+    doPlay(){
+        if( !this._values || this._values.length == 0 || this.mdata.length == 0 ) return;
+
+        this.intervalCount = 0;
+        this.intervalId = setInterval(()=>{
+            if( this.intervalCount < this.mdata.length ){
+                jQuery(this.inputElem).data("ionRangeSlider").update({ "from": this.intervalCount });
+            }
+            else{
+                if( this.intervalId ){
+                    clearInterval(this.intervalId);
+                    this.intervalId = undefined;
+                }
+            }
+            this.intervalCount += 1;
+        }, this.intervalSec);
+    }
+
+    doStop(){
+        if( this.intervalId ){
+            clearInterval(this.intervalId);
+            this.intervalId = undefined;
+        }
+        jQuery(this.inputElem).data("ionRangeSlider").update({ "from": 0 });
     }
 }
